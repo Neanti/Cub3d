@@ -13,9 +13,18 @@
 #ifndef FT_LIBFT_H
 # define FT_LIBFT_H
 
-# include <stdlib.h>
 # include <unistd.h>
+# include <stdlib.h>
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <stdio.h>
 
+int                 contain(char *s);
+ssize_t             lire(int fd, char *s);
+char                *concat(char *s1, char *s2, ssize_t t);
+int                 next(char *rest, char **line);
+char                *suppr(char *s);
+int                 get_next_line(int fd, char **line);
 int					ft_atoi(const char *str);
 void				ft_bzero(void *b, size_t n);
 void				*ft_calloc(size_t count, size_t size);

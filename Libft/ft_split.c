@@ -64,6 +64,7 @@ char		**ft_split(char const *s, char c)
 	if ((out[nbc] = (char*)malloc(sizeof(char))) == NULL)
 		return (NULL);
 	out[nbc] = 0;
+	//printf("malloc %i de %s\n",nbc,s);
 	if (nbc > 0)
 		return (splitbody(nbc, s, c, out));
 	return (out);
