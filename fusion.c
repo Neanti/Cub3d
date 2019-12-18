@@ -18,6 +18,10 @@
 #define PURPLE get_color(255, 0, 255)
 #define YELLOW get_color(255, 251, 0)
 
+#define screenWidth 640
+#define screenHeight 480
+#define texWidth 64
+#define texHeight 64
 #define mapWidth 24
 #define mapHeight 24
 
@@ -455,6 +459,22 @@ void rot_vec(double a, t_info *game)
     game->planeY = sin(degree2radian(a)) * old + cos(degree2radian(a)) * game->planeY;
 }
 
+double ft_calc_vec(double x, double y, double rX, double rY)
+{
+    double l1;
+    double l2;
+    double p;
+    double co;
+
+    l1 = sqrt(pow(x,2) + pow(y,2));
+    l2 = sqrt(pow(rX,2) + pow(rY, 2));
+    p = x * rX + y * rY;
+    co = (double)p / (l1 * l2);
+    co = acos(co);
+    co = co * (180 / M_PI);
+    return (co);
+}
+
 int done(int key, void *a)
 {
     t_wrap *wrap = a;
@@ -473,11 +493,11 @@ int done(int key, void *a)
         game->posX -= game->dirX * 0.8;
         game->posY -= game->dirY * 0.8;
     }
-    else if (key == 12 || key == 113) //rot gauche 12 mac 113 ubuntu
+    else if (key == 0 || key == 113) //rot gauche 12 mac 113 ubuntu
     {
         rot_vec(-20, game);
     }
-    else if (key == 14 || key == 100) //rot droite 14 mac 100 ubuntu
+    else if (key == 2 || key == 100) //rot droite 14 mac 100 ubuntu
     {
         rot_vec(20, game);
     }
@@ -508,7 +528,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
     //{
     //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
     //posX = 13;
-    for(int x = 0; x < w; x++) // w=wight ????
+    for(int x = 0; x < w; x++) // w=width ????
     {
         double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
         double rayDirX = dirX + planeX * cameraX;
@@ -568,7 +588,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
             //if (worldMap[mapX][mapY] > 0)
             //printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
             if (cub->map[mapX][mapY] - 48 > 0  && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W') {
-                //printf("HIT %i %i\n", mapX, mapY);
+                //printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
                 hit = 1;
             }
             if (side == 0)
@@ -587,21 +607,32 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
             int color;
             //if (worldMap[mapX][mapY] == 1)
             if (cub->map[mapX][mapY] - 48 == 1)
-                color = RED;
+                color = PINK;
             //else if (worldMap[mapX][mapY] == 2)
             else if (cub->map[mapX][mapY] - 48 == 2)
-                color = ORANGE;
+                color = PINK;
             //else if (worldMap[mapX][mapY] == 3)
             else if (cub->map[mapX][mapY] - 48 == 3)
                 color = PINK;
             //else if (worldMap[mapX][mapY] == 4)
             else if (cub->map[mapX][mapY] - 48 == 4)
-                color = PURPLE;
+                color = PINK;
             else
                 color = PINK;
-
-            if (side == 1)
-                color = color / 2;
+            //double teta = ft_calc_vec(1,0,rayDirX, rayDirY);
+            //printf("TETA=%f\n",teta);
+            if (rayDirX > 0) // north ?
+                color = PINK;
+            else
+                color = YELLOW;
+            if (side == 1 && rayDirY > 0) // west ?
+                color = PURPLE;
+            else if (side == 1) //east ?
+            {
+                color = ORANGE;
+            }
+            //if (side == 1)
+                //color = RED;
             //if (worldMap[mapX][mapY] >= 1 )
             if (cub->map[mapX][mapY] - 48 >= 1 && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W')
             {
