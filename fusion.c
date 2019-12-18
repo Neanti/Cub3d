@@ -68,6 +68,17 @@ typedef struct s_cub
 
 }               t_cub;
 
+typedef struct s_img
+{
+	void *img;
+	int nbl;
+	int nbc;
+	int bpp;
+	int lsize;
+	int endian;
+}				t_img;
+
+
 typedef struct    data_s
 {
     void          *mlx_ptr;
@@ -106,7 +117,7 @@ int get_color(int r, int g, int b)
 
 void print_cub(t_cub c)
 {
-    printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s\n---FIN---\n",c.rw,c.rh,c.F,c.C,c.NO,c.SO,c.WE, c.EA);
+    printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s\n---FIN---\n",c.rw,c.rh,c.F,c.C,c.NO,c.SO,c.WE, c.EA, c.S);
 }
 
 int check_ext(char *s)
@@ -295,6 +306,127 @@ void fill_cub(char **s, t_cub *cub)
     }
 
     //ft_split_free(s);
+}
+
+char *add_char(char *s, int n)
+{
+	char *out;
+	int l = ft_strlen(s);
+
+	out = malloc(sizeof(char) * (l + 2));
+	out[l+1] = '\0';
+	int i = 0;
+	while(i < l)
+	{
+		out[i] = s[i];
+		i++;
+	}
+	out[i] = n + 48;
+	free(s);
+	return (out);
+}
+
+char *swap(char *s)
+{
+	int i = 0;
+	int l = ft_strlen(s);
+	int k = 7;
+	char c;
+	int n = 0;
+	printf("\nORIG=%s\n",s);
+	while(k != l - 1)
+	{
+		
+		//printf("i=%i, k=%i, l=%i\n",i,k,l);
+		while(i < k)
+		{
+			//printf("\t\ti=%i, k=%i\n",i,k);
+			c = s[i];
+			s[i] = s[k];
+			s[k] = c;
+			i++;
+			k--;
+		}
+		n++;
+		i = 8 * n;
+		k = 8 * n + 7;
+	}
+	printf("SWAP=%s\n",s);
+	return (s);
+}
+
+int deal_pack(char *s)
+{
+	int i = 0;
+	int k = 8;
+	int b = 128;
+	int so = 0;
+	while(i < k)
+	{
+		so = so + b * (s[i] - 48);
+		b = b / 2;
+		i++;
+	}
+	printf("PAR=%d\n",so);
+	return (so);
+}
+
+int bin2col(char *s, int endian)
+{
+	int i = 0;
+	char *out;
+	// if (endian == 0)
+	// 	out = swap(s);
+	// else
+	// {
+	// 	out = s;
+	// }
+	out = s;
+	int t[3];
+	t[0] = deal_pack(out);
+	t[1] = deal_pack(out + 8);
+	t[2] = deal_pack(out + 16);
+	int c;
+	if (endian == 0)
+		c = get_color(t[2], t[1], t[0]);
+	else
+	{
+		c = get_color(t[0], t[1], t[2]);
+	}
+	
+	return (c);
+}
+
+int pick_color(t_img img, int x, int y)
+{
+	int i;
+	char *res;
+	res = malloc(sizeof(char) * 1);
+	res[0] = '\0';
+	int k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
+	//printf("%s\n",s);
+	i = 0;
+	//int k = 0;
+	int l = 0;
+	char *s = img.img;
+	printf("k=%i\n",k);
+	while(i < img.bpp)
+	{
+		//printf("\n\nk=%i, i%i\n\n", k,i);
+      	printf("%d", !!((s[k] << l) & 0x80));
+		res = add_char(res, !!((s[k] << l) & 0x80));
+		i++;
+		l++;
+		if (i % 8 == 0)
+		{
+			printf(".");
+			k++;
+			l = 0;
+		}
+	}
+	int color = bin2col(res, img.endian);
+	printf("END et RES=%s\n",res);
+	return (color);
 }
 
 int try_fd(char *s)
@@ -622,11 +754,17 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
             //double teta = ft_calc_vec(1,0,rayDirX, rayDirY);
             //printf("TETA=%f\n",teta);
             if (rayDirX > 0) // north ?
+            {
                 color = PINK;
+            }
             else
+            {
                 color = YELLOW;
+            }
             if (side == 1 && rayDirY > 0) // west ?
+            {
                 color = PURPLE;
+            }
             else if (side == 1) //east ?
             {
                 color = ORANGE;
@@ -778,6 +916,29 @@ void locate_player(t_info *game, t_cub *cub)
     }
 }
 
+t_img *ft_prepare_txt(t_cub cub, data_t data)
+{
+    t_img *out;
+    out = malloc(sizeof(t_img) * 5); // N S E O SP ordre
+    int i = 0;
+    out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.NO, &(out[0].nbc), &(out[0].nbl));
+    out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp), &(out[0].lsize), &(out[0].endian));
+    printf("1 SUCCES\n");
+    out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.SO, &(out[1].nbc), &(out[1].nbl));
+    out[1].img = mlx_get_data_addr(out[1].img, &(out[1].bpp), &(out[1].lsize), &(out[1].endian));
+    printf("2 SUCCES\n");
+    out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.EA, &(out[2].nbc), &(out[2].nbl));
+    out[2].img = mlx_get_data_addr(out[2].img, &(out[2].bpp), &(out[2].lsize), &(out[2].endian));
+    printf("3 SUCCES\n");
+    out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.WE, &(out[3].nbc), &(out[3].nbl));
+    out[3].img = mlx_get_data_addr(out[3].img, &(out[3].bpp), &(out[3].lsize), &(out[3].endian));
+    printf("4 SUCCES\n");
+    out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.S, &(out[4].nbc), &(out[4].nbl));
+    out[4].img = mlx_get_data_addr(out[4].img, &(out[4].bpp), &(out[4].lsize), &(out[4].endian));
+    printf("5 SUCCES\n");
+    return (out);
+}
+
 int main(int ac, char **argv)
 {
     if (ac == 3)
@@ -869,7 +1030,7 @@ int main(int ac, char **argv)
         return (EXIT_FAILURE);
     if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w,h, "Hello world")) == NULL)
         return (EXIT_FAILURE);
-
+    t_img *txt = ft_prepare_txt(cub, data);
     game.w = w;
     game.h = h;
     t_wrap wrap;

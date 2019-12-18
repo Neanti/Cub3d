@@ -1,10 +1,10 @@
 R 1920 1080
-NO ./N
-SO ./S
-WE ./W
-EA ./E
+NO ./test.xpm
+SO ./test.xpm
+WE ./test.xpm
+EA ./test.xpm
 
-S ./SP
+S ./test.xpm
 F    8  ,  5 , 255
 C 225,30,0
 
