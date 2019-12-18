@@ -102,6 +102,7 @@ typedef struct s_wrap
     data_t *data;
     t_info *game;
     t_cub *cub;
+    t_img *img;
 }              t_wrap;
 
 int get_color(int r, int g, int b)
@@ -333,7 +334,7 @@ char *swap(char *s)
 	int k = 7;
 	char c;
 	int n = 0;
-	printf("\nORIG=%s\n",s);
+	//printf("\nORIG=%s\n",s);
 	while(k != l - 1)
 	{
 		
@@ -351,7 +352,7 @@ char *swap(char *s)
 		i = 8 * n;
 		k = 8 * n + 7;
 	}
-	printf("SWAP=%s\n",s);
+	//printf("SWAP=%s\n",s);
 	return (s);
 }
 
@@ -367,7 +368,7 @@ int deal_pack(char *s)
 		b = b / 2;
 		i++;
 	}
-	printf("PAR=%d\n",so);
+	//printf("PAR=%d\n",so);
 	return (so);
 }
 
@@ -409,23 +410,23 @@ int pick_color(t_img img, int x, int y)
 	//int k = 0;
 	int l = 0;
 	char *s = img.img;
-	printf("k=%i\n",k);
+	//printf("k=%i\n",k);
 	while(i < img.bpp)
 	{
 		//printf("\n\nk=%i, i%i\n\n", k,i);
-      	printf("%d", !!((s[k] << l) & 0x80));
+      	//printf("%d", !!((s[k] << l) & 0x80));
 		res = add_char(res, !!((s[k] << l) & 0x80));
 		i++;
 		l++;
 		if (i % 8 == 0)
 		{
-			printf(".");
+			//printf(".");
 			k++;
 			l = 0;
 		}
 	}
 	int color = bin2col(res, img.endian);
-	printf("END et RES=%s\n",res);
+	//printf("END et RES=%s\n",res);
 	return (color);
 }
 
@@ -563,9 +564,12 @@ double degree2radian(double d)
     return (r);
 }
 
-void ft_put_line(int x, int start, int end, int color , data_t data, int j)
+void ft_put_line(int x, int start, int end, t_img *txt , data_t data, int j, int nbt, double wallX)
 {
     int i = 0;
+    int col;
+    int color;
+    col = round(wallX * 100 * (txt[nbt].nbc - 1) / 100) + 1;
     while (i < j)
     {
         if (i < start)
@@ -573,12 +577,17 @@ void ft_put_line(int x, int start, int end, int color , data_t data, int j)
         else if (i > end)
             mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, BLUE);
         else
+        {
+            //printf("x=%i, st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\n",x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc);
+            //printf("coord= col=%i l=%i\n",col, round((x * 100 / (end - start) / 100 * txt[nbt].nbl)));
+            color = pick_color(txt[nbt],round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1  , col);
             mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
-
+        }
         i++;
     }
 }
-void fct_test(data_t data, int key, t_info *game, t_cub *cub);
+
+void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt);
 
 void rot_vec(double a, t_info *game)
 {
@@ -613,6 +622,7 @@ int done(int key, void *a)
     t_info *game = wrap->game;
     data_t *data = wrap->data;
     t_cub *cub = wrap->cub;
+    t_img *txt = wrap->img;
     //printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f\n",key, game->dirX, game->dirY, game->posX, game->posY);
     printf("key=%i\n",key);
     if (key == 13 || key == 122) // avance 13 mac 122 ubuntu
@@ -638,11 +648,11 @@ int done(int key, void *a)
     }
     //printf("DONE2 key=%i dirx = %f diry= %f et posx=%f et posY=%f\n",key, game->dirX, game->dirY, game->posX, game->posY);
     //printf("posx=%f done\n",game.posX);
-    fct_test(*data, key, game, cub);
+    fct_test(*data, key, game, cub, txt);
     return (1);
 }
 
-void fct_test(data_t data, int key, t_info *game, t_cub *cub)
+void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 {
     //printf("MOVE\n");
     int w = 512;
@@ -737,6 +747,11 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
             if (drawEnd >= h)
                 drawEnd = h - 1;
             int color;
+            double wallX; //where exactly the wall was hit
+            if (side == 0) wallX = posY + perpWallDist * rayDirY;
+            else           wallX = posX + perpWallDist * rayDirX;
+            wallX -= floor((wallX));
+            //printf("WALLX = %f\n", wallX);
             //if (worldMap[mapX][mapY] == 1)
             if (cub->map[mapX][mapY] - 48 == 1)
                 color = PINK;
@@ -753,20 +768,25 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
                 color = PINK;
             //double teta = ft_calc_vec(1,0,rayDirX, rayDirY);
             //printf("TETA=%f\n",teta);
+            int nbt;
             if (rayDirX > 0) // north ?
             {
                 color = PINK;
+                nbt = 0;
             }
             else
             {
+                nbt = 1;
                 color = YELLOW;
             }
             if (side == 1 && rayDirY > 0) // west ?
             {
+                nbt = 2;
                 color = PURPLE;
             }
             else if (side == 1) //east ?
             {
+                nbt = 3;
                 color = ORANGE;
             }
             //if (side == 1)
@@ -774,7 +794,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub)
             //if (worldMap[mapX][mapY] >= 1 )
             if (cub->map[mapX][mapY] - 48 >= 1 && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W')
             {
-                ft_put_line(x, drawStart, drawEnd, color, data, h);
+                ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
             }
         }
     }
@@ -1037,8 +1057,9 @@ int main(int ac, char **argv)
     wrap.data = &data;
     wrap.game = &game;
     wrap.cub = &cub;
+    wrap.img = txt;
     mlx_key_hook(data.mlx_win, done, &wrap);
-    fct_test(data, -1, &game, &cub);
+    fct_test(data, -1, &game, &cub, txt);
     close(fd);
     return (0);
 }

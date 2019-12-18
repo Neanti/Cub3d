@@ -1,10 +1,10 @@
 R 1920 1080
-NO ./test.xpm
-SO ./test.xpm
-WE ./test.xpm
-EA ./test.xpm
+NO ./proto.xpm
+SO ./proto.xpm
+WE ./proto.xpm
+EA ./proto.xpm
 
-S ./test.xpm
+S ./proto.xpm
 F    8  ,  5 , 255
 C 225,30,0
 
