@@ -32,7 +32,7 @@ void disp(char *s)
 	int k = 0;
 	int i;
 	int g = 0;
-	while(g < 100)
+	while(g < 20)
 	{
 		k = 0;
 	while(k < 4)
@@ -40,6 +40,8 @@ void disp(char *s)
   	for (i = 0; i < 8; i++) {
       printf("%d", !!((s[k + (g*4)] << i) & 0x80));
   }
+  	printf(".");
+
   k++;
 	}
   printf("\n");
@@ -51,11 +53,13 @@ int pick_color(t_img img, int x, int y)
 {
 	int i;
 
-	char *s = img.img + (x + y) * img.bpp;
+	int k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
 	//printf("%s\n",s);
 	i = 0;
-	int k = 0;
+	//int k = 0;
 	int l = 0;
+	char *s = img.img;
+	printf("k=%i\n",k);
 	while(i < img.bpp)
 	{
 		//printf("\n\nk=%i, i%i\n\n", k,i);
@@ -64,6 +68,7 @@ int pick_color(t_img img, int x, int y)
 		l++;
 		if (i % 8 == 0)
 		{
+			printf(".");
 			k++;
 			l = 0;
 		}
@@ -98,7 +103,7 @@ int main(void)
 	printf("i=%i, j=%i, bpp=%i, size_line=%i, endian=%i\n%i\n",i,j, bpp, size_line, endian,(int)s);
 	disp(s);
 	printimg(im);
-	pick_color(im, 2, 2);
+	pick_color(im, 3, 1);
 	mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, img, 0, 0);
     mlx_loop(data.mlx_ptr);
     return (EXIT_SUCCESS);
