@@ -1086,6 +1086,7 @@ int main(int ac, char **argv)
     wrap.cub = &cub;
     wrap.img = txt;
     mlx_key_hook(data.mlx_win, done, &wrap);
+    //mlx_hook()
     fct_test(data, -1, &game, &cub, txt);
     close(fd);
     free(txt);
