@@ -14,6 +14,9 @@ int main()
 {
 	int col = round (0.9 * 100 * (4 - 1) / 100) + 1;
 	printf("col=%d\n",col);
-	int t = round((96 * 100 / (288 - 96) / 100 * (4 - 1))) + 1;
-	printf("LI=%d\n",t);
+	int t = round((298 * 100 / (double)(299 - 0) / 100 * (4 - 1))) + 1;
+	int t2 = round((299 * 100 / (299 - 0) / 100 * (4 - 1))) + 1;
+	//round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1 
+	printf("LI=%d LI2=%i\n",t,t2);
+
 }
