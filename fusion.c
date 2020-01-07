@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <math.h>
 
+
 #define RED get_color(255,0,0)
 #define ORANGE get_color(255,128,0)
 #define BLUE get_color(0,0,255)
@@ -22,36 +23,30 @@
 #define screenHeight 480
 #define texWidth 64
 #define texHeight 64
-#define mapWidth 24
-#define mapHeight 24
 
-int worldMap[mapWidth][mapHeight]=
-        {
-                {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
-                {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-                {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-                {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-                {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-                {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
-                {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
-                {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-                {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
-                {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-                {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
-                {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
-                {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-                {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-                {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-                {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
-                {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-                {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
-                {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-                {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
-                {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-                {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
-                {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-                {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
-        };
+size_t strlcpy(char *dst, const char *src, size_t dsize)
+{
+    const char *osrc = src;
+    size_t nleft = dsize;
+
+    /* Copy as many bytes as will fit. */
+    if (nleft != 0) {
+        while (--nleft != 0) {
+            if ((*dst++ = *src++) == '\0')
+                break;
+        }
+    }
+
+    /* Not enough room in dst, add NUL and traverse rest of src. */
+    if (nleft == 0) {
+        if (dsize != 0)
+            *dst = '\0';		/* NUL-terminate dst */
+        while (*src++)
+            ;
+    }
+
+    return(src - osrc - 1);	/* count does not include NUL */
+}
 
 typedef struct s_cub
 {
@@ -65,7 +60,8 @@ typedef struct s_cub
     int F;
     int C;
     char **map;
-
+    int mx;
+    int my;
 }               t_cub;
 
 typedef struct s_img
@@ -93,8 +89,8 @@ typedef struct s_info
     double dirY;
     double planeX;
     double planeY;
-    int h;
-    int w;
+    //int h;
+    //int w;
 }           t_info;
 
 typedef struct s_wrap
@@ -626,6 +622,7 @@ double ft_calc_vec(double x, double y, double rX, double rY)
     return (co);
 }
 
+
 int done(int key, void *a)
 {
     t_wrap *wrap = a;
@@ -633,9 +630,9 @@ int done(int key, void *a)
     data_t *data = wrap->data;
     t_cub *cub = wrap->cub;
     t_img *txt = wrap->img;
-    //printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f\n",key, game->dirX, game->dirY, game->posX, game->posY);
+    printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f mapx=%i, mapy=%i\n",key, game->dirX, game->dirY, game->posX, game->posY, cub->mx, cub->my);
     printf("key=%i\n",key);
-    if (key == 53)
+    if (key == 53 || key == 65307) // mac ubuntu
     {
         printf("LEAVEDONE\n");
         mlx_destroy_window(data->mlx_ptr, data->mlx_win);
@@ -646,11 +643,21 @@ int done(int key, void *a)
     {
         game->posX += game->dirX * 0.8;
         game->posY += game->dirY * 0.8;
+       if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
+       {
+           game->posX -= game->dirX * 0.8;
+           game->posY -= game->dirY * 0.8;
+       }
     }
     else if (key == 1 || key == 115) // recule 1 mac 115 ubuntu
     {
         game->posX -= game->dirX * 0.8;
         game->posY -= game->dirY * 0.8;
+        if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
+        {
+            game->posX += game->dirX * 0.8;
+            game->posY += game->dirY * 0.8;
+        }
     }
     else if (key == 0 || key == 113) //rot gauche 0 mac 113 ubuntu
     {
@@ -688,8 +695,8 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
     double dirY = game->dirY;
     double planeX = game->planeX;
     double planeY = game->planeY;
-    //while(1)
-    //{
+    while(1)
+    {
     //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
     //posX = 13;
     for(int x = 0; x < w; x++) // w=width ????
@@ -779,41 +786,41 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
             if(side == 1 && rayDirY < 0) texX = txt[0].nbc - texX - 1;
             //printf("WALLX = %f\n", wallX);
             //if (worldMap[mapX][mapY] == 1)
-            if (cub->map[mapX][mapY] - 48 == 1)
-                color = PINK;
-            //else if (worldMap[mapX][mapY] == 2)
-            else if (cub->map[mapX][mapY] - 48 == 2)
-                color = PINK;
-            //else if (worldMap[mapX][mapY] == 3)
-            else if (cub->map[mapX][mapY] - 48 == 3)
-                color = PINK;
-            //else if (worldMap[mapX][mapY] == 4)
-            else if (cub->map[mapX][mapY] - 48 == 4)
-                color = PINK;
-            else
-                color = PINK;
+//            if (cub->map[mapX][mapY] - 48 == 1)
+//                color = PINK;
+//            //else if (worldMap[mapX][mapY] == 2)
+//            else if (cub->map[mapX][mapY] - 48 == 2)
+//                color = PINK;
+//            //else if (worldMap[mapX][mapY] == 3)
+//            else if (cub->map[mapX][mapY] - 48 == 3)
+//                color = PINK;
+//            //else if (worldMap[mapX][mapY] == 4)
+//            else if (cub->map[mapX][mapY] - 48 == 4)
+//                color = PINK;
+//            else
+//                color = PINK;
             //double teta = ft_calc_vec(1,0,rayDirX, rayDirY);
             //printf("TETA=%f\n",teta);
             int nbt;
             if (rayDirX > 0) // north ?
             {
-                color = PINK;
+                //color = PINK;
                 nbt = 0;
             }
             else
             {
                 nbt = 1;
-                color = YELLOW;
+                //color = YELLOW;
             }
             if (side == 1 && rayDirY > 0) // west ?
             {
                 nbt = 2;
-                color = PURPLE;
+                //color = PURPLE;
             }
             else if (side == 1) //east ?
             {
                 nbt = 3;
-                color = ORANGE;
+                //color = ORANGE;
             }
             //if (side == 1)
                 //color = RED;
@@ -821,15 +828,19 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
             if (cub->map[mapX][mapY] - 48 >= 1 && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W')
             {
                 ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
+                //if (cub->map[mapX][mapY] == 2)
+                //{
+                  // draw sprite
+                //}
             }
         }
     }
     printf("CALL LOOP\n");
     mlx_loop(data.mlx_ptr);
-    //}
+    }
 }
 
-char **remove_space(char **s)
+char **remove_space(char **s,int *x, int *y)
 {
     char **out;
     int i;
@@ -877,10 +888,13 @@ char **remove_space(char **s)
         }
         i++;
     }
+    printf("calc mapx=%i, mapy=%i\n",i,j);
+    *x = i;
+    *y = (j + 1) / 2;
     return (out);
 }
 
-char **ft_prepare_map(char *m)
+char **ft_prepare_map(char *m,int *x, int *y)
 {
     printf("PREP MAP %s\n",m);
     int i;
@@ -901,7 +915,7 @@ char **ft_prepare_map(char *m)
         }
         i++;
     }*/
-    out = remove_space(out);
+    out = remove_space(out, x, y);
     return (out);
 }
 
@@ -1063,7 +1077,7 @@ int main(int ac, char **argv)
     }
 
     char **g_map;
-    g_map = ft_prepare_map(map);
+    g_map = ft_prepare_map(map, &cub.mx, &cub.my);
     printf("%i %i\n",g_map[0][0], g_map[0][1]);
     cub.map = g_map;
     t_info game = prepare_info();
@@ -1078,8 +1092,8 @@ int main(int ac, char **argv)
     if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w,h, "Hello world")) == NULL)
         return (EXIT_FAILURE);
     t_img *txt = ft_prepare_txt(cub, data);
-    game.w = w;
-    game.h = h;
+    //game.w = w;
+    //game.h = h;
     t_wrap wrap;
     wrap.data = &data;
     wrap.game = &game;
