@@ -10,12 +10,11 @@
 #include <sys/types.h>
 #include <math.h>
 
-
-#define RED get_color(255,0,0)
-#define ORANGE get_color(255,128,0)
-#define BLUE get_color(0,0,255)
+#define RED get_color(255, 0, 0)
+#define ORANGE get_color(255, 128, 0)
+#define BLUE get_color(0, 0, 255)
 #define GREY get_color(112, 112, 112)
-#define PINK get_color(255,176,176)
+#define PINK get_color(255, 176, 176)
 #define PURPLE get_color(255, 0, 255)
 #define YELLOW get_color(255, 251, 0)
 
@@ -24,29 +23,29 @@
 #define texWidth 64
 #define texHeight 64
 
-size_t strlcpy(char *dst, const char *src, size_t dsize)
-{
-    const char *osrc = src;
-    size_t nleft = dsize;
+// size_t strlcpy(char *dst, const char *src, size_t dsize)
+// {
+//     const char *osrc = src;
+//     size_t nleft = dsize;
 
-    /* Copy as many bytes as will fit. */
-    if (nleft != 0) {
-        while (--nleft != 0) {
-            if ((*dst++ = *src++) == '\0')
-                break;
-        }
-    }
+//     /* Copy as many bytes as will fit. */
+//     if (nleft != 0) {
+//         while (--nleft != 0) {
+//             if ((*dst++ = *src++) == '\0')
+//                 break;
+//         }
+//     }
 
-    /* Not enough room in dst, add NUL and traverse rest of src. */
-    if (nleft == 0) {
-        if (dsize != 0)
-            *dst = '\0';		/* NUL-terminate dst */
-        while (*src++)
-            ;
-    }
+//     /* Not enough room in dst, add NUL and traverse rest of src. */
+//     if (nleft == 0) {
+//         if (dsize != 0)
+//             *dst = '\0';		/* NUL-terminate dst */
+//         while (*src++)
+//             ;
+//     }
 
-    return(src - osrc - 1);	/* count does not include NUL */
-}
+//     return(src - osrc - 1);	/* count does not include NUL */
+// }
 
 typedef struct s_cub
 {
@@ -62,24 +61,23 @@ typedef struct s_cub
     char **map;
     int mx;
     int my;
-}               t_cub;
+} t_cub;
 
 typedef struct s_img
 {
-	void *img;
-	int nbl;
-	int nbc;
-	int bpp;
-	int lsize;
-	int endian;
-}				t_img;
+    void *img;
+    int nbl;
+    int nbc;
+    int bpp;
+    int lsize;
+    int endian;
+} t_img;
 
-
-typedef struct    data_s
+typedef struct data_s
 {
-    void          *mlx_ptr;
-    void          *mlx_win;
-}                 data_t;
+    void *mlx_ptr;
+    void *mlx_win;
+} data_t;
 
 typedef struct s_info
 {
@@ -91,7 +89,7 @@ typedef struct s_info
     double planeY;
     //int h;
     //int w;
-}           t_info;
+} t_info;
 
 typedef struct s_wrap
 {
@@ -99,7 +97,7 @@ typedef struct s_wrap
     t_info *game;
     t_cub *cub;
     t_img *img;
-}              t_wrap;
+} t_wrap;
 
 int get_color(int r, int g, int b)
 {
@@ -114,7 +112,7 @@ int get_color(int r, int g, int b)
 
 void print_cub(t_cub c)
 {
-    printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s\n---FIN---\n",c.rw,c.rh,c.F,c.C,c.NO,c.SO,c.WE, c.EA, c.S);
+    printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s\n---FIN---\n", c.rw, c.rh, c.F, c.C, c.NO, c.SO, c.WE, c.EA, c.S);
 }
 
 int check_ext(char *s)
@@ -141,7 +139,7 @@ int check_ext(char *s)
 
 void ft_split_free(char **s)
 {
-    while(s[0] != 0)
+    while (s[0] != 0)
     {
         free(s[0]);
         s = s + 1;
@@ -157,7 +155,7 @@ int ft_check_int(char *s)
 
     tmp = ft_strtrim(s, " ");
     i = 0;
-    while(tmp[i])
+    while (tmp[i])
     {
         if (!ft_isdigit(tmp[i]))
         {
@@ -262,7 +260,7 @@ void fill_cub(char **s, t_cub *cub)
     int i;
     int id;
 
-    if(s[0] != 0)
+    if (s[0] != 0)
         id = check_id(s[0]);
     else
         return;
@@ -305,129 +303,130 @@ void fill_cub(char **s, t_cub *cub)
     //ft_split_free(s);
 }
 
-
 char *swap(char *s)
 {
-	int i = 0;
-	int l = ft_strlen(s);
-	int k = 7;
-	char c;
-	int n = 0;
-	//printf("\nORIG=%s\n",s);
-	while(k != l - 1)
-	{
-		
-		//printf("i=%i, k=%i, l=%i\n",i,k,l);
-		while(i < k)
-		{
-			//printf("\t\ti=%i, k=%i\n",i,k);
-			c = s[i];
-			s[i] = s[k];
-			s[k] = c;
-			i++;
-			k--;
-		}
-		n++;
-		i = 8 * n;
-		k = 8 * n + 7;
-	}
-	//printf("SWAP=%s\n",s);
-	return (s);
+    int i = 0;
+    int l = ft_strlen(s);
+    int k = 7;
+    char c;
+    int n = 0;
+    //printf("\nORIG=%s\n",s);
+    while (k != l - 1)
+    {
+
+        //printf("i=%i, k=%i, l=%i\n",i,k,l);
+        while (i < k)
+        {
+            //printf("\t\ti=%i, k=%i\n",i,k);
+            c = s[i];
+            s[i] = s[k];
+            s[k] = c;
+            i++;
+            k--;
+        }
+        n++;
+        i = 8 * n;
+        k = 8 * n + 7;
+    }
+    //printf("SWAP=%s\n",s);
+    return (s);
 }
 
 int deal_pack(char *s)
 {
-	int i = 0;
-	int k = 8;
-	int b = 128;
-	int so = 0;
-	while(i < k)
-	{
-		so = so + b * (s[i] - 48);
-		b = b / 2;
-		i++;
-	}
-	//printf("PAR=%d\n",so);
-	return (so);
+    int i = 0;
+    int k = 8;
+    int b = 128;
+    int so = 0;
+    while (i < k)
+    {
+        so = so + b * (s[i] - 48);
+        b = b / 2;
+        i++;
+    }
+    //printf("PAR=%d\n",so);
+    return (so);
 }
 
 int bin2col(char *s, int endian)
 {
-	int i = 0;
-	char *out;
-	// if (endian == 0)
-	// 	out = swap(s);
-	// else
-	// {
-	// 	out = s;
-	// }
-	out = s;
-	int t[3];
-	t[0] = deal_pack(out);
-	t[1] = deal_pack(out + 8);
-	t[2] = deal_pack(out + 16);
-	int c;
-	if (endian == 0)
-		c = get_color(t[2], t[1], t[0]);
-	else
-	{
-		c = get_color(t[0], t[1], t[2]);
-	}
-	
-	return (c);
+    int i = 0;
+    char *out;
+    // if (endian == 0)
+    // 	out = swap(s);
+    // else
+    // {
+    // 	out = s;
+    // }
+    out = s;
+    int t[3];
+    t[0] = deal_pack(out);
+    t[1] = deal_pack(out + 8);
+    t[2] = deal_pack(out + 16);
+    int c;
+    if (endian == 0)
+        c = get_color(t[2], t[1], t[0]);
+    else
+    {
+        c = get_color(t[0], t[1], t[2]);
+    }
+
+    return (c);
 }
 
 char *add_char(char *s, int n)
 {
-	char *out;
-	int l = (int)strlen(s);
+    char *out;
+    int l = (int)strlen(s);
 
-	out = s;
-	out[l+1] = '\0';
-	int i = 0;
-	while(i < l)
-	{
-		//out[i] = s[i];
-		i++;
-	}
-	out[i] = n + 48;
-	//free(s);
-	return (out);
+    out = s;
+    out[l + 1] = '\0';
+    int i = 0;
+    while (i < l)
+    {
+        //out[i] = s[i];
+        i++;
+    }
+    out[i] = n + 48;
+    //free(s);
+    return (out);
 }
-
 
 int pick_color(t_img img, int x, int y)
 {
-   // printf("PICK x=%i y=%i\n",x,y);
-	int i;
-	char *res;
-	//res = malloc(sizeof(char) * 1);
+    // printf("PICK x=%i y=%i\n",x,y);
+    int i;
+    char *res;
+    //res = malloc(sizeof(char) * 1);
     res = malloc(sizeof(char) * (img.bpp + 1));
-	res[0] = '\0';
-	int k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
-	//printf("%s\n",s);
-	i = 0;
-	//int k = 0;
-	int l = 0;
-	char *s = img.img;
-	//printf("k=%i\n",k);
-	while(i < img.bpp)
-	{
-		//printf("\n\nk=%i, i%i\n\n", k,i);
-      	//printf("%d", !!((s[k] << l) & 0x80));
-		res = add_char(res, !!((s[k] << l) & 0x80));
-		i++;
-		l++;
-		if (i % 8 == 0)
-		{
-			//printf(".");
-			k++;
-			l = 0;
-		}
-	}
-	int color = bin2col(res, img.endian);
-	//printf("END et RES=%s\n",res);
-	return (color);
+    res[0] = '\0';
+    int k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
+    //printf("%s\n",s);
+    i = 0;
+    //int k = 0;
+    int l = 0;
+    char *s = img.img;
+    //printf("k=%i\n",k);
+    while (i < img.bpp)
+    {
+        //printf("\n\nk=%i, i%i\n\n", k,i);
+        //printf("%d", !!((s[k] << l) & 0x80));
+        res = add_char(res, !!((s[k] << l) & 0x80));
+        i++;
+        l++;
+        if (i % 8 == 0)
+        {
+            //printf(".");
+            k++;
+            l = 0;
+        }
+    }
+    int color = bin2col(res, img.endian);
+    //printf("RES=%s\n",res);
+    if (res[img.bpp - 1] == '1')
+        color = -1;
+    //printf("END et RES=%s\n",res);
+    return (color);
 }
 
 int try_fd(char *s)
@@ -470,7 +469,7 @@ char *append_n(char *s)
 
     i = 0;
     out = malloc(sizeof(char) * (ft_strlen(s) + 2));
-    while(s[i])
+    while (s[i])
     {
         out[i] = s[i];
         i++;
@@ -531,14 +530,15 @@ int check_border(char *s)
 
     player = 0;
     i = 0;
-    while(s[i])
+    while (s[i])
     {
         if (!is_in_map(s[i]))
             return (0);
         i++;
     }
     printf("2nd part check map\n");
-    if (!is_closed(s)) {
+    if (!is_closed(s))
+    {
         printf("PAS CLOS\n");
         return (0);
     }
@@ -564,12 +564,15 @@ double degree2radian(double d)
     return (r);
 }
 
-void ft_put_line(int x, int start, int end, t_img *txt , data_t data, int j, int nbt, double wallX)
+void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX)
 {
+    //printf("x=%i,  st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
     int i = 0;
     int col;
     int color;
-    col = round(wallX *(txt[nbt].nbc - 1)) + 1;
+    col = round(wallX * (txt[nbt].nbc - 1)) + 1;
+    // if (nbt == 4)
+    //     col = txt[4].nbc - 2;
     //int color;
     while (i < j)
     {
@@ -579,14 +582,18 @@ void ft_put_line(int x, int start, int end, t_img *txt , data_t data, int j, int
             mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, BLUE);
         else
         {
-            //printf("i=%i, x=%i,  st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\n",i,x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc);
+            // if (nbt == 4)
+            // printf("i=%i, x=%i,  st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\npick c=%i, l=%i\n",i,x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc, col, (int)round(((i - start) / (double)(end - start)  * (txt[nbt].nbl - 1))) +1);
             //printf("coord= col=%i l=%d \n",col, (int)round(((i - start) / (double)(end - start)  * (txt[nbt].nbl - 1))) +1);
-            color = pick_color(txt[nbt],(int)round(((i - start) / (double)(end - start)  * (txt[nbt].nbl - 1))) +1 , col);
-            //printf("color=%i\n",color);
+            color = pick_color(txt[nbt], (int)round(((i - start) / (double)(end - start) * (txt[nbt].nbl - 1))) + 1, col);
+            // if (nbt == 4)
+            // printf("color=%i\n",color);
             //color = pick_color(txt[nbt], col,round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1  );
             //d = i * 256 - j * 128 + (end - start) * 128;
             //texY = ((d * txt[nbt].nbl) / (end - start)) / 256;
             //color = pick_color(txt[nbt], texY + 1, d + 1);
+            // if (color == -1)
+            //     printf("BLO\n");
             mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
         }
         i++;
@@ -613,15 +620,14 @@ double ft_calc_vec(double x, double y, double rX, double rY)
     double p;
     double co;
 
-    l1 = sqrt(pow(x,2) + pow(y,2));
-    l2 = sqrt(pow(rX,2) + pow(rY, 2));
+    l1 = sqrt(pow(x, 2) + pow(y, 2));
+    l2 = sqrt(pow(rX, 2) + pow(rY, 2));
     p = x * rX + y * rY;
     co = (double)p / (l1 * l2);
     co = acos(co);
     co = co * (180 / M_PI);
     return (co);
 }
-
 
 int done(int key, void *a)
 {
@@ -630,8 +636,8 @@ int done(int key, void *a)
     data_t *data = wrap->data;
     t_cub *cub = wrap->cub;
     t_img *txt = wrap->img;
-    printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f mapx=%i, mapy=%i\n",key, game->dirX, game->dirY, game->posX, game->posY, cub->mx, cub->my);
-    printf("key=%i\n",key);
+    //printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f mapx=%i, mapy=%i\n",key, game->dirX, game->dirY, game->posX, game->posY, cub->mx, cub->my);
+    printf("key=%i\n", key);
     if (key == 53 || key == 65307) // mac ubuntu
     {
         printf("LEAVEDONE\n");
@@ -643,11 +649,11 @@ int done(int key, void *a)
     {
         game->posX += game->dirX * 0.8;
         game->posY += game->dirY * 0.8;
-       if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
-       {
-           game->posX -= game->dirX * 0.8;
-           game->posY -= game->dirY * 0.8;
-       }
+        if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
+        {
+            game->posX -= game->dirX * 0.8;
+            game->posY -= game->dirY * 0.8;
+        }
     }
     else if (key == 1 || key == 115) // recule 1 mac 115 ubuntu
     {
@@ -676,6 +682,23 @@ int done(int key, void *a)
     return (1);
 }
 
+void ft_sprite_line(t_img img, data_t data, double wallX, int h, int x, int start, int end)
+{
+    int i = start;
+    int col = round(wallX * (img.nbc - 1)) + 1;
+    int color;
+    //printf("DRAW SPRITE\n");
+    while (i < end)
+    {
+        color = pick_color(img, (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col);
+        // if (color != -1)
+        // printf("color of x=%i,y=%i is %i\n", (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col, color);
+        if (color != -1)
+            mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
+        i++;
+    }
+}
+
 void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 {
     if (key == 53)
@@ -686,161 +709,217 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
     //printf("MOVE\n");
     int w = cub->rw;
     int h = cub->rh;
-    // double posX = 8, posY = 12;
-    // double dirX = -1, dirY = 0;
-    // double planeX = 0, planeY = 0.66;
     double posX = game->posX;
     double posY = game->posY;
     double dirX = game->dirX;
     double dirY = game->dirY;
     double planeX = game->planeX;
     double planeY = game->planeY;
-    while(1)
+
+    double ZBuffer[cub->rw];
+
+    while (1)
     {
-    //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
-    //posX = 13;
-    for(int x = 0; x < w; x++) // w=width ????
-    {
-        double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
-        double rayDirX = dirX + planeX * cameraX;
-        double rayDirY = dirY + planeY * cameraX;
-        int mapX = (int)posX; // cast (int)double a verif
-        int mapY = (int)posY; // represente coord rayon sur map(donc int)
-
-        double sideDistX;
-        double sideDistY;
-
-        double deltaDistX = fabs(1 / rayDirX);
-        double deltaDistY = fabs(1 / rayDirY); // Voir double/int
-        //printf("%f %f delta\n",deltaDistX, deltaDistY);
-        double perpWallDist;
-
-        int stepX;
-        int stepY;
-
-        int hit = 0;
-        int side;
-
-        if (rayDirX < 0)
+        //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
+        //posX = 13;
+        for (int x = 0; x < w; x++) // w=width
         {
-            stepX = -1;
-            sideDistX = (posX - mapX) * deltaDistX;
-        }
-        else
-        {
-            stepX = 1;
-            sideDistX = (mapX + 1.0 - posX) * deltaDistX;
-        }
-        if (rayDirY < 0)
-        {
-            stepY = -1;
-            sideDistY = (posY - mapY) * deltaDistY;
-        }
-        else
-        {
-            stepY = 1;
-            sideDistY = (mapY + 1.0 - posY) * deltaDistY;
-        }
+            double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
+            double rayDirX = dirX + planeX * cameraX;
+            double rayDirY = dirY + planeY * cameraX;
+            int mapX = (int)posX; // cast (int)double a verif
+            int mapY = (int)posY; // represente coord rayon sur map(donc int)
 
-        while (hit == 0)
-        {
-            if (sideDistX < sideDistY)
+            double sideDistX;
+            double sideDistY;
+
+            double deltaDistX = fabs(1 / rayDirX);
+            double deltaDistY = fabs(1 / rayDirY); // Voir double/int
+            //printf("%f %f delta\n",deltaDistX, deltaDistY);
+            double perpWallDist;
+
+            int stepX;
+            int stepY;
+
+            int hit = 0;
+            int side;
+            if (rayDirX < 0)
             {
-                sideDistX += deltaDistX;
-                mapX +=stepX;
-                side = 0;
+                stepX = -1;
+                sideDistX = (posX - mapX) * deltaDistX;
             }
             else
             {
-                sideDistY += deltaDistY;
-                mapY += stepY;
-                side = 1;
+                stepX = 1;
+                sideDistX = (mapX + 1.0 - posX) * deltaDistX;
             }
-            //if (worldMap[mapX][mapY] > 0)
-            //printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
-            if (cub->map[mapX][mapY] - 48 > 0  && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W') {
-                //printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
-                hit = 1;
-            }
-            if (side == 0)
-                perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-            else
-                perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
-
-            int lineHeight = (int)(h / perpWallDist);
-
-            int drawStart = -lineHeight / 2 + h / 2;
-            //if (drawStart < 0)
-                //drawStart = 0;
-            int drawEnd = lineHeight / 2 + h / 2;
-            //if (drawEnd >= h)
-                //drawEnd = h - 1;
-            int color;
-            double wallX; //where exactly the wall was hit
-            if (side == 0) wallX = posY + perpWallDist * rayDirY;
-            else           wallX = posX + perpWallDist * rayDirX;
-            wallX -= floor((wallX));
-            //x coordinate on the texture
-            int texX = (int)(wallX * (double)texWidth);
-            if(side == 0 && rayDirX > 0) texX = txt[0].nbc - texX - 1; // changer txt nb
-            if(side == 1 && rayDirY < 0) texX = txt[0].nbc - texX - 1;
-            //printf("WALLX = %f\n", wallX);
-            //if (worldMap[mapX][mapY] == 1)
-//            if (cub->map[mapX][mapY] - 48 == 1)
-//                color = PINK;
-//            //else if (worldMap[mapX][mapY] == 2)
-//            else if (cub->map[mapX][mapY] - 48 == 2)
-//                color = PINK;
-//            //else if (worldMap[mapX][mapY] == 3)
-//            else if (cub->map[mapX][mapY] - 48 == 3)
-//                color = PINK;
-//            //else if (worldMap[mapX][mapY] == 4)
-//            else if (cub->map[mapX][mapY] - 48 == 4)
-//                color = PINK;
-//            else
-//                color = PINK;
-            //double teta = ft_calc_vec(1,0,rayDirX, rayDirY);
-            //printf("TETA=%f\n",teta);
-            int nbt;
-            if (rayDirX > 0) // north ?
+            if (rayDirY < 0)
             {
-                //color = PINK;
-                nbt = 0;
+                stepY = -1;
+                sideDistY = (posY - mapY) * deltaDistY;
             }
             else
             {
-                nbt = 1;
-                //color = YELLOW;
+                stepY = 1;
+                sideDistY = (mapY + 1.0 - posY) * deltaDistY;
             }
-            if (side == 1 && rayDirY > 0) // west ?
+            // int sprite = 0;
+            // int spriteX = 0;
+            // int allow = 0;
+            //printf("EDGE\n");
+            int i = 0;
+            while (hit == 0)
             {
-                nbt = 2;
-                //color = PURPLE;
+                if (sideDistX < sideDistY)
+                {
+                    sideDistX += deltaDistX;
+                    mapX += stepX;
+                    side = 0;
+                }
+                else
+                {
+                    sideDistY += deltaDistY;
+                    mapY += stepY;
+                    side = 1;
+                }
+                //printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
+                if (cub->map[mapX][mapY] - 48 == 1)
+                {
+                    //printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
+                    hit = 1;
+                }
+                // if (cub->map[mapX][mapY] - 48 == 2 && sprite == 0)
+                // {
+                //     sprite = 1;
+                // }
+                if (side == 0)
+                    perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+                else
+                    perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+
+                int lineHeight = (int)(h / perpWallDist);
+
+                int drawStart = -lineHeight / 2 + h / 2;
+                int drawEnd = lineHeight / 2 + h / 2;
+                int color;
+                double wallX; //where exactly the wall was hit
+                if (side == 0)
+                    wallX = posY + perpWallDist * rayDirY;
+                else
+                    wallX = posX + perpWallDist * rayDirX;
+                wallX -= floor((wallX));
+                //x coordinate on the texture
+                int texX = (int)(wallX * (double)texWidth);
+                if (side == 0 && rayDirX > 0)
+                    texX = txt[0].nbc - texX - 1; // changer txt nb
+                if (side == 1 && rayDirY < 0)
+                    texX = txt[0].nbc - texX - 1;
+                int nbt;
+                if (rayDirX > 0) // north ?
+                {
+                    nbt = 0;
+                }
+                else
+                {
+                    nbt = 1;
+                }
+                if (side == 1 && rayDirY > 0) // west ?
+                {
+                    nbt = 2;
+                }
+                else if (side == 1) //east ?
+                {
+                    nbt = 3;
+                }
+                if (hit == 1)
+                {
+                    ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
+                    //printf("draw WALL %i\n",i);
+                    //allow = 1;
+                }
+                // if (sprite == 1 && allow == 1)
+                // {
+                //     //printf("linesprite %i\n",i);
+                //     ft_sprite_line(txt[4], data, wallX, h, x,drawStart, drawEnd);
+                //     sprite = -1;
+                //     allow = 0;
+                // }
+                ZBuffer[x] = perpWallDist;
             }
-            else if (side == 1) //east ?
+            //SPRITE CASTING
+            //sort sprites from far to close
+            for (int i = 0; i < numSprites; i++)
             {
-                nbt = 3;
-                //color = ORANGE;
+                spriteOrder[i] = i;
+                spriteDistance[i] = ((posX - sprite[i].x) * (posX - sprite[i].x) + (posY - sprite[i].y) * (posY - sprite[i].y)); //sqrt not taken, unneeded
             }
-            //if (side == 1)
-                //color = RED;
-            //if (worldMap[mapX][mapY] >= 1 )
-            if (cub->map[mapX][mapY] - 48 >= 1 && cub->map[mapX][mapY] != 'N' && cub->map[mapX][mapY] != 'E' && cub->map[mapX][mapY] != 'S' && cub->map[mapX][mapY] != 'W')
+            sortSprites(spriteOrder, spriteDistance, numSprites);
+
+            //after sorting the sprites, do the projection and draw them
+            for (int i = 0; i < numSprites; i++)
             {
-                ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
-                //if (cub->map[mapX][mapY] == 2)
-                //{
-                  // draw sprite
-                //}
+                //translate sprite position to relative to camera
+                double spriteX = sprite[spriteOrder[i]].x - posX;
+                double spriteY = sprite[spriteOrder[i]].y - posY;
+
+                //transform sprite with the inverse camera matrix
+                // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
+                // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
+                // [ planeY   dirY ]                                          [ -planeY  planeX ]
+
+                double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
+
+                double transformX = invDet * (dirY * spriteX - dirX * spriteY);
+                double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
+
+                int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
+
+                //calculate height of the sprite on screen
+                int spriteHeight = abs(int(h / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
+                //calculate lowest and highest pixel to fill in current stripe
+                int drawStartY = -spriteHeight / 2 + h / 2;
+                if (drawStartY < 0)
+                    drawStartY = 0;
+                int drawEndY = spriteHeight / 2 + h / 2;
+                if (drawEndY >= h)
+                    drawEndY = h - 1;
+
+                //calculate width of the sprite
+                int spriteWidth = abs(int(h / (transformY)));
+                int drawStartX = -spriteWidth / 2 + spriteScreenX;
+                if (drawStartX < 0)
+                    drawStartX = 0;
+                int drawEndX = spriteWidth / 2 + spriteScreenX;
+                if (drawEndX >= w)
+                    drawEndX = w - 1;
+
+                //loop through every vertical stripe of the sprite on screen
+                for (int stripe = drawStartX; stripe < drawEndX; stripe++)
+                {
+                    int texX = int(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
+                    //the conditions in the if are:
+                    //1) it's in front of camera plane so you don't see things behind you
+                    //2) it's on the screen (left)
+                    //3) it's on the screen (right)
+                    //4) ZBuffer, with perpendicular distance
+                    if (transformY > 0 && stripe > 0 && stripe < w && transformY < ZBuffer[stripe])
+                        for (int y = drawStartY; y < drawEndY; y++) //for every pixel of the current stripe
+                        {
+                            int d = (y)*256 - h * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
+                            int texY = ((d * texHeight) / spriteHeight) / 256;
+                            Uint32 color = texture[sprite[spriteOrder[i]].texture][texWidth * texY + texX]; //get current color from the texture
+                            if ((color & 0x00FFFFFF) != 0)
+                                buffer[y][stripe] = color; //paint pixel if it isn't black, black is the invisible color
+                        }
+                }
             }
         }
-    }
-    printf("CALL LOOP\n");
-    mlx_loop(data.mlx_ptr);
+        printf("CALL LOOP\n");
+        mlx_loop(data.mlx_ptr);
     }
 }
 
-char **remove_space(char **s,int *x, int *y)
+char **remove_space(char **s, int *x, int *y)
 {
     char **out;
     int i;
@@ -851,31 +930,31 @@ char **remove_space(char **s,int *x, int *y)
     i = 0;
     m = 0;
     n = 0;
-    while(s[i])
+    while (s[i])
     {
         j = 0;
-        while(s[i][j])
+        while (s[i][j])
         {
             j++;
         }
         m = (m > j) ? m : j;
         i++;
     }
-    out = malloc(sizeof(char*) * (i + 1));
+    out = malloc(sizeof(char *) * (i + 1));
     out[i] = 0;
-    while(i > 0)
+    while (i > 0)
     {
         out[i - 1] = malloc(sizeof(char) * (m + 1));
-        ft_bzero(out[i- 1], m);
+        ft_bzero(out[i - 1], m);
         i--;
     }
     i = 0;
     j = 0;
-    while(s[i])
+    while (s[i])
     {
         j = 0;
         n = 0;
-        while(s[i][j])
+        while (s[i][j])
         {
             if (s[i][j] != ' ')
             {
@@ -888,15 +967,15 @@ char **remove_space(char **s,int *x, int *y)
         }
         i++;
     }
-    printf("calc mapx=%i, mapy=%i\n",i,j);
+    printf("calc mapx=%i, mapy=%i\n", i, j);
     *x = i;
     *y = (j + 1) / 2;
     return (out);
 }
 
-char **ft_prepare_map(char *m,int *x, int *y)
+char **ft_prepare_map(char *m, int *x, int *y)
 {
-    printf("PREP MAP %s\n",m);
+    printf("PREP MAP %s\n", m);
     int i;
     int j;
     char **out;
@@ -905,16 +984,16 @@ char **ft_prepare_map(char *m,int *x, int *y)
     j = 0;
     out = ft_split(m, '\n');
     /*while(out[i])
-    {
+        {
         printf("RES=%s\n",out[i]);
         j = 0;
         while(out[i][j])
         {
-            out[i][j] -= 48;
-            j++;
+        out[i][j] -= 48;
+        j++;
         }
         i++;
-    }*/
+        }*/
     out = remove_space(out, x, y);
     return (out);
 }
@@ -928,12 +1007,12 @@ void locate_player(t_info *game, t_cub *cub)
     while (cub->map[i])
     {
         j = 0;
-        while(cub->map[i][j])
+        while (cub->map[i][j])
         {
             //printf("CHECK %i\n",cub->map[i][j]);
             if (cub->map[i][j] == 'N')
             {
-                printf("player : x=%i, j=%i et orientation=N\n",i,j);
+                printf("player : x=%i, j=%i et orientation=N\n", i, j);
                 // = N
                 game->posX = i;
                 game->posY = j;
@@ -943,7 +1022,7 @@ void locate_player(t_info *game, t_cub *cub)
             }
             else if (cub->map[i][j] == 'E')
             {
-                printf("player : x=%i, j=%i et orientation=E\n",i,j);
+                printf("player : x=%i, j=%i et orientation=E\n", i, j);
                 //E
                 game->posX = i;
                 game->posY = j;
@@ -953,7 +1032,7 @@ void locate_player(t_info *game, t_cub *cub)
             }
             else if (cub->map[i][j] == 'W')
             {
-                printf("player : x=%i, j=%i et orientation=W\n",i,j);
+                printf("player : x=%i, j=%i et orientation=W\n", i, j);
                 //W
                 game->posX = i;
                 game->posY = j;
@@ -963,7 +1042,7 @@ void locate_player(t_info *game, t_cub *cub)
             }
             else if (cub->map[i][j] == 'S')
             {
-                printf("player : x=%i, j=%i et orientation=S\n",i,j);
+                printf("player : x=%i, j=%i et orientation=S\n", i, j);
                 //S
                 game->posX = i;
                 game->posY = j;
@@ -1032,8 +1111,8 @@ int main(int ac, char **argv)
 
     map = malloc(sizeof(char));
     map[0] = '\0';
-    printf("fd=%i\n",fd);
-    while((k = get_next_line(fd, &line)) != 0)
+    printf("fd=%i\n", fd);
+    while ((k = get_next_line(fd, &line)) != 0)
     {
         if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
         {
@@ -1042,10 +1121,10 @@ int main(int ac, char **argv)
         }
         if (stat == 0)
         {
-            printf("TOFILL line=%s\n",line);
+            printf("TOFILL line=%s\n", line);
             fill_cub(ft_split(line, ' '), &cub);
         }
-        printf("line=%s\n",line);
+        printf("line=%s\n", line);
         if (line[0] == '1')
         {
             oldmap = map;
@@ -1068,7 +1147,7 @@ int main(int ac, char **argv)
         return (0);
     }
     print_cub(cub);
-    printf("---MAP---\n%s---FIN MAP---\n",map);
+    printf("---MAP---\n%s---FIN MAP---\n", map);
     int border = check_border(map);
     if (!border)
     {
@@ -1078,18 +1157,18 @@ int main(int ac, char **argv)
 
     char **g_map;
     g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-    printf("%i %i\n",g_map[0][0], g_map[0][1]);
+    printf("%i %i\n", g_map[0][0], g_map[0][1]);
     cub.map = g_map;
     t_info game = prepare_info();
     locate_player(&game, &cub);
 
     //fin parsing debut jeu
-    data_t        data;
+    data_t data;
     int w = cub.rw;
     int h = cub.rh;
     if ((data.mlx_ptr = mlx_init()) == NULL)
         return (EXIT_FAILURE);
-    if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w,h, "Hello world")) == NULL)
+    if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
         return (EXIT_FAILURE);
     t_img *txt = ft_prepare_txt(cub, data);
     //game.w = w;

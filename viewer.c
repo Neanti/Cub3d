@@ -33,7 +33,7 @@ void disp(char *s)
 	int k = 0;
 	int i;
 	int g = 0;
-	while(g < 16)
+	while(g < 5)
 	{
 		k = 0;
 	while(k < 4)
@@ -162,11 +162,11 @@ int pick_color(t_img img, int x, int y)
 	//int k = 0;
 	int l = 0;
 	char *s = img.img;
-	printf("k=%i\n",k);
+	//printf("k=%i\n",k);
 	while(i < img.bpp)
 	{
-		//printf("\n\nk=%i, i%i\n\n", k,i);
-      	printf("%d", !!((s[k] << l) & 0x80));
+		//printf("\n\nk=%i, i%i\n", k,i);
+      	//printf("%d", !!((s[k] << l) & 0x80));
 		res = add_char(res, !!((s[k] << l) & 0x80));
 		i++;
 		l++;
@@ -177,7 +177,10 @@ int pick_color(t_img img, int x, int y)
 			l = 0;
 		}
 	}
+	//printf("RES=%s\n",res);
 	int color = bin2col(res, img.endian);
+	if (res[img.bpp - 1] == '1')
+		color = -1;
 	printf("END et RES=%s\n",res);
 	return (color);
 }
@@ -196,12 +199,12 @@ int main(void)
 
     if ((data.mlx_ptr = mlx_init()) == NULL)
         return (EXIT_FAILURE);
-    if ((data.mlx_win = mlx_new_window(data.mlx_ptr, 200, 100, "Hello world")) == NULL)
+    if ((data.mlx_win = mlx_new_window(data.mlx_ptr, 500, 500, "Hello world")) == NULL)
         return (EXIT_FAILURE);
 	int i = 2;
 	int j = 2;
 	t_img im;
-	im.img = mlx_xpm_file_to_image(data.mlx_ptr, "proto.xpm", &(im.nbc), &(im.nbl));
+	im.img = mlx_xpm_file_to_image(data.mlx_ptr, "bear.xpm", &(im.nbc), &(im.nbl));
 	int bpp;
 	int size_line;
 	int endian;
@@ -218,9 +221,14 @@ int main(void)
 	printimg(im);
 	int co = pick_color(im, 4, 4);
 	printf("CO=%d\n",co);
-	mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, im.img, 0, 0);
+	mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, im.img, 10, 10);
 	mlx_key_hook(data.mlx_win, done,&data);
     mlx_loop(data.mlx_ptr);
 	printf("\n\nFINN\n\n");
+	// int i,j;
+	// void* img = mlx_xpm_file_to_image(data.mlx_ptr, "bear.xpm", &i,&j);
+	// disp(img);
+	// mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, img,0,0);
+	// mlx_loop(data.mlx_ptr);
     return (EXIT_SUCCESS);
 }
