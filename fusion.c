@@ -846,144 +846,77 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
                 // }
                 ZBuffer[x] = perpWallDist;
             }
-            //SPRITE CASTING
-            //sort sprites from far to close
-            for (int i = 0; i < numSprites; i++)
-            {
-                spriteOrder[i] = i;
-                spriteDistance[i] = ((posX - sprite[i].x) * (posX - sprite[i].x) + (posY - sprite[i].y) * (posY - sprite[i].y)); //sqrt not taken, unneeded
-            }
-            sortSprites(spriteOrder, spriteDistance, numSprites);
-
-            //after sorting the sprites, do the projection and draw them
-            for (int i = 0; i < numSprites; i++)
-            {
-                //translate sprite position to relative to camera
-                double spriteX = sprite[spriteOrder[i]].x - posX;
-                double spriteY = sprite[spriteOrder[i]].y - posY;
-
-                //transform sprite with the inverse camera matrix
-                // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
-                // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
-                // [ planeY   dirY ]                                          [ -planeY  planeX ]
-
-                double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
-
-                double transformX = invDet * (dirY * spriteX - dirX * spriteY);
-                double transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
-
-                int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
-
-                //calculate height of the sprite on screen
-                int spriteHeight = abs(int(h / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
-                //calculate lowest and highest pixel to fill in current stripe
-                int drawStartY = -spriteHeight / 2 + h / 2;
-                if (drawStartY < 0)
-                    drawStartY = 0;
-                int drawEndY = spriteHeight / 2 + h / 2;
-                if (drawEndY >= h)
-                    drawEndY = h - 1;
-
-                //calculate width of the sprite
-                int spriteWidth = abs(int(h / (transformY)));
-                int drawStartX = -spriteWidth / 2 + spriteScreenX;
-                if (drawStartX < 0)
-                    drawStartX = 0;
-                int drawEndX = spriteWidth / 2 + spriteScreenX;
-                if (drawEndX >= w)
-                    drawEndX = w - 1;
-
-                //loop through every vertical stripe of the sprite on screen
-                for (int stripe = drawStartX; stripe < drawEndX; stripe++)
-                {
-                    int texX = int(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
-                    //the conditions in the if are:
-                    //1) it's in front of camera plane so you don't see things behind you
-                    //2) it's on the screen (left)
-                    //3) it's on the screen (right)
-                    //4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < w && transformY < ZBuffer[stripe])
-                        for (int y = drawStartY; y < drawEndY; y++) //for every pixel of the current stripe
-                        {
-                            int d = (y)*256 - h * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
-                            int texY = ((d * texHeight) / spriteHeight) / 256;
-                            Uint32 color = texture[sprite[spriteOrder[i]].texture][texWidth * texY + texX]; //get current color from the texture
-                            if ((color & 0x00FFFFFF) != 0)
-                                buffer[y][stripe] = color; //paint pixel if it isn't black, black is the invisible color
-                        }
-                }
-            }
         }
-        printf("CALL LOOP\n");
-        mlx_loop(data.mlx_ptr);
+            printf("CALL LOOP\n");
+            mlx_loop(data.mlx_ptr);
     }
 }
 
-char **remove_space(char **s, int *x, int *y)
-{
-    char **out;
-    int i;
-    int j;
-    int m;
-    int n;
+    char **remove_space(char **s, int *x, int *y)
+    {
+        char **out;
+        int i;
+        int j;
+        int m;
+        int n;
 
-    i = 0;
-    m = 0;
-    n = 0;
-    while (s[i])
-    {
-        j = 0;
-        while (s[i][j])
-        {
-            j++;
-        }
-        m = (m > j) ? m : j;
-        i++;
-    }
-    out = malloc(sizeof(char *) * (i + 1));
-    out[i] = 0;
-    while (i > 0)
-    {
-        out[i - 1] = malloc(sizeof(char) * (m + 1));
-        ft_bzero(out[i - 1], m);
-        i--;
-    }
-    i = 0;
-    j = 0;
-    while (s[i])
-    {
-        j = 0;
+        i = 0;
+        m = 0;
         n = 0;
-        while (s[i][j])
+        while (s[i])
         {
-            if (s[i][j] != ' ')
+            j = 0;
+            while (s[i][j])
             {
-                out[i][n] = s[i][j];
                 j++;
-                n++;
             }
-            else
-                j++;
+            m = (m > j) ? m : j;
+            i++;
         }
-        i++;
+        out = malloc(sizeof(char *) * (i + 1));
+        out[i] = 0;
+        while (i > 0)
+        {
+            out[i - 1] = malloc(sizeof(char) * (m + 1));
+            ft_bzero(out[i - 1], m);
+            i--;
+        }
+        i = 0;
+        j = 0;
+        while (s[i])
+        {
+            j = 0;
+            n = 0;
+            while (s[i][j])
+            {
+                if (s[i][j] != ' ')
+                {
+                    out[i][n] = s[i][j];
+                    j++;
+                    n++;
+                }
+                else
+                    j++;
+            }
+            i++;
+        }
+        printf("calc mapx=%i, mapy=%i\n", i, j);
+        *x = i;
+        *y = (j + 1) / 2;
+        return (out);
     }
-    printf("calc mapx=%i, mapy=%i\n", i, j);
-    *x = i;
-    *y = (j + 1) / 2;
-    return (out);
-}
 
-char **ft_prepare_map(char *m, int *x, int *y)
-{
-    printf("PREP MAP %s\n", m);
-    int i;
-    int j;
-    char **out;
+    char **ft_prepare_map(char *m, int *x, int *y)
+    {
+        printf("PREP MAP %s\n", m);
+        int i;
+        int j;
+        char **out;
 
-    i = 0;
-    j = 0;
-    out = ft_split(m, '\n');
-    /*while(out[i])
+        i = 0;
+        j = 0;
+        out = ft_split(m, '\n');
+        /*while(out[i])
         {
         printf("RES=%s\n",out[i]);
         j = 0;
@@ -994,196 +927,196 @@ char **ft_prepare_map(char *m, int *x, int *y)
         }
         i++;
         }*/
-    out = remove_space(out, x, y);
-    return (out);
-}
+        out = remove_space(out, x, y);
+        return (out);
+    }
 
-void locate_player(t_info *game, t_cub *cub)
-{
-    int i;
-    int j;
-    printf("LOCATE\n");
-    i = 0;
-    while (cub->map[i])
+    void locate_player(t_info * game, t_cub * cub)
     {
-        j = 0;
-        while (cub->map[i][j])
+        int i;
+        int j;
+        printf("LOCATE\n");
+        i = 0;
+        while (cub->map[i])
         {
-            //printf("CHECK %i\n",cub->map[i][j]);
-            if (cub->map[i][j] == 'N')
+            j = 0;
+            while (cub->map[i][j])
             {
-                printf("player : x=%i, j=%i et orientation=N\n", i, j);
-                // = N
-                game->posX = i;
-                game->posY = j;
-                game->dirX = -1;
-                game->dirY = 0;
-                return;
+                //printf("CHECK %i\n",cub->map[i][j]);
+                if (cub->map[i][j] == 'N')
+                {
+                    printf("player : x=%i, j=%i et orientation=N\n", i, j);
+                    // = N
+                    game->posX = i;
+                    game->posY = j;
+                    game->dirX = -1;
+                    game->dirY = 0;
+                    return;
+                }
+                else if (cub->map[i][j] == 'E')
+                {
+                    printf("player : x=%i, j=%i et orientation=E\n", i, j);
+                    //E
+                    game->posX = i;
+                    game->posY = j;
+                    game->dirX = 0;
+                    game->dirY = 1;
+                    return;
+                }
+                else if (cub->map[i][j] == 'W')
+                {
+                    printf("player : x=%i, j=%i et orientation=W\n", i, j);
+                    //W
+                    game->posX = i;
+                    game->posY = j;
+                    game->dirX = 0;
+                    game->dirY = -1;
+                    return;
+                }
+                else if (cub->map[i][j] == 'S')
+                {
+                    printf("player : x=%i, j=%i et orientation=S\n", i, j);
+                    //S
+                    game->posX = i;
+                    game->posY = j;
+                    game->dirX = 1;
+                    game->dirY = 0;
+                    return;
+                }
+                j++;
             }
-            else if (cub->map[i][j] == 'E')
-            {
-                printf("player : x=%i, j=%i et orientation=E\n", i, j);
-                //E
-                game->posX = i;
-                game->posY = j;
-                game->dirX = 0;
-                game->dirY = 1;
-                return;
-            }
-            else if (cub->map[i][j] == 'W')
-            {
-                printf("player : x=%i, j=%i et orientation=W\n", i, j);
-                //W
-                game->posX = i;
-                game->posY = j;
-                game->dirX = 0;
-                game->dirY = -1;
-                return;
-            }
-            else if (cub->map[i][j] == 'S')
-            {
-                printf("player : x=%i, j=%i et orientation=S\n", i, j);
-                //S
-                game->posX = i;
-                game->posY = j;
-                game->dirX = 1;
-                game->dirY = 0;
-                return;
-            }
-            j++;
+            i++;
         }
-        i++;
-    }
-}
-
-t_img *ft_prepare_txt(t_cub cub, data_t data)
-{
-    t_img *out;
-    out = malloc(sizeof(t_img) * 5); // N S E O SP ordre
-    int i = 0;
-    out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.NO, &(out[0].nbc), &(out[0].nbl));
-    out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp), &(out[0].lsize), &(out[0].endian));
-    printf("1 SUCCES\n");
-    out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.SO, &(out[1].nbc), &(out[1].nbl));
-    out[1].img = mlx_get_data_addr(out[1].img, &(out[1].bpp), &(out[1].lsize), &(out[1].endian));
-    printf("2 SUCCES\n");
-    out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.EA, &(out[2].nbc), &(out[2].nbl));
-    out[2].img = mlx_get_data_addr(out[2].img, &(out[2].bpp), &(out[2].lsize), &(out[2].endian));
-    printf("3 SUCCES\n");
-    out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.WE, &(out[3].nbc), &(out[3].nbl));
-    out[3].img = mlx_get_data_addr(out[3].img, &(out[3].bpp), &(out[3].lsize), &(out[3].endian));
-    printf("4 SUCCES\n");
-    out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.S, &(out[4].nbc), &(out[4].nbl));
-    out[4].img = mlx_get_data_addr(out[4].img, &(out[4].bpp), &(out[4].lsize), &(out[4].endian));
-    printf("5 SUCCES\n");
-    return (out);
-}
-
-int main(int ac, char **argv)
-{
-    if (ac == 3)
-    {
-        printf("save img\n");
-    }
-    else if (ac == 1)
-    {
-        printf("Error\n Pas de fichier en argument\n");
-        return (0);
-    }
-    if (check_ext(argv[1]) == 0)
-    {
-        printf("Error\n Extension fausse\n");
-        return (0);
-    }
-    int fd = open(argv[1], O_RDONLY);
-    if (read(fd, NULL, 0) < 0)
-    {
-        printf("Error\nEchec de read\n");
-        return (0);
     }
 
-    char *line;
-    t_cub cub;
-    int k = 0;
-    int stat = 0;
-    char *map;
-    char *oldmap;
-
-    map = malloc(sizeof(char));
-    map[0] = '\0';
-    printf("fd=%i\n", fd);
-    while ((k = get_next_line(fd, &line)) != 0)
+    t_img *ft_prepare_txt(t_cub cub, data_t data)
     {
-        if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
+        t_img *out;
+        out = malloc(sizeof(t_img) * 5); // N S E O SP ordre
+        int i = 0;
+        out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.NO, &(out[0].nbc), &(out[0].nbl));
+        out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp), &(out[0].lsize), &(out[0].endian));
+        printf("1 SUCCES\n");
+        out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.SO, &(out[1].nbc), &(out[1].nbl));
+        out[1].img = mlx_get_data_addr(out[1].img, &(out[1].bpp), &(out[1].lsize), &(out[1].endian));
+        printf("2 SUCCES\n");
+        out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.EA, &(out[2].nbc), &(out[2].nbl));
+        out[2].img = mlx_get_data_addr(out[2].img, &(out[2].bpp), &(out[2].lsize), &(out[2].endian));
+        printf("3 SUCCES\n");
+        out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.WE, &(out[3].nbc), &(out[3].nbl));
+        out[3].img = mlx_get_data_addr(out[3].img, &(out[3].bpp), &(out[3].lsize), &(out[3].endian));
+        printf("4 SUCCES\n");
+        out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.S, &(out[4].nbc), &(out[4].nbl));
+        out[4].img = mlx_get_data_addr(out[4].img, &(out[4].bpp), &(out[4].lsize), &(out[4].endian));
+        printf("5 SUCCES\n");
+        return (out);
+    }
+
+    int main(int ac, char **argv)
+    {
+        if (ac == 3)
         {
-            printf("Error\nMap coupé ou manque de mur\n");
+            printf("save img\n");
+        }
+        else if (ac == 1)
+        {
+            printf("Error\n Pas de fichier en argument\n");
             return (0);
         }
-        if (stat == 0)
+        if (check_ext(argv[1]) == 0)
         {
-            printf("TOFILL line=%s\n", line);
-            fill_cub(ft_split(line, ' '), &cub);
+            printf("Error\n Extension fausse\n");
+            return (0);
+        }
+        int fd = open(argv[1], O_RDONLY);
+        if (read(fd, NULL, 0) < 0)
+        {
+            printf("Error\nEchec de read\n");
+            return (0);
+        }
+
+        char *line;
+        t_cub cub;
+        int k = 0;
+        int stat = 0;
+        char *map;
+        char *oldmap;
+
+        map = malloc(sizeof(char));
+        map[0] = '\0';
+        printf("fd=%i\n", fd);
+        while ((k = get_next_line(fd, &line)) != 0)
+        {
+            if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
+            {
+                printf("Error\nMap coupé ou manque de mur\n");
+                return (0);
+            }
+            if (stat == 0)
+            {
+                printf("TOFILL line=%s\n", line);
+                fill_cub(ft_split(line, ' '), &cub);
+            }
+            printf("line=%s\n", line);
+            if (line[0] == '1')
+            {
+                oldmap = map;
+                map = ft_strjoin(map, line);
+                map = append_n(map);
+                free(oldmap);
+                stat = 1;
+            }
+            free(line);
         }
         printf("line=%s\n", line);
-        if (line[0] == '1')
+        if (try_path(&cub) == -1)
         {
-            oldmap = map;
-            map = ft_strjoin(map, line);
-            map = append_n(map);
-            free(oldmap);
-            stat = 1;
+            printf("Error\nChemins non valides");
+            return (0);
         }
-        free(line);
-    }
-    printf("line=%s\n", line);
-    if (try_path(&cub) == -1)
-    {
-        printf("Error\nChemins non valides");
-        return (0);
-    }
-    if (cub.F == -1 || cub.C == -1)
-    {
-        printf("Error\nMauvaises couleurs\n");
-        return (0);
-    }
-    print_cub(cub);
-    printf("---MAP---\n%s---FIN MAP---\n", map);
-    int border = check_border(map);
-    if (!border)
-    {
-        printf("Error\nManque de mur\n");
-        return (0);
-    }
+        if (cub.F == -1 || cub.C == -1)
+        {
+            printf("Error\nMauvaises couleurs\n");
+            return (0);
+        }
+        print_cub(cub);
+        printf("---MAP---\n%s---FIN MAP---\n", map);
+        int border = check_border(map);
+        if (!border)
+        {
+            printf("Error\nManque de mur\n");
+            return (0);
+        }
 
-    char **g_map;
-    g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-    printf("%i %i\n", g_map[0][0], g_map[0][1]);
-    cub.map = g_map;
-    t_info game = prepare_info();
-    locate_player(&game, &cub);
+        char **g_map;
+        g_map = ft_prepare_map(map, &cub.mx, &cub.my);
+        printf("%i %i\n", g_map[0][0], g_map[0][1]);
+        cub.map = g_map;
+        t_info game = prepare_info();
+        locate_player(&game, &cub);
 
-    //fin parsing debut jeu
-    data_t data;
-    int w = cub.rw;
-    int h = cub.rh;
-    if ((data.mlx_ptr = mlx_init()) == NULL)
-        return (EXIT_FAILURE);
-    if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
-        return (EXIT_FAILURE);
-    t_img *txt = ft_prepare_txt(cub, data);
-    //game.w = w;
-    //game.h = h;
-    t_wrap wrap;
-    wrap.data = &data;
-    wrap.game = &game;
-    wrap.cub = &cub;
-    wrap.img = txt;
-    mlx_key_hook(data.mlx_win, done, &wrap);
-    //mlx_hook()
-    fct_test(data, -1, &game, &cub, txt);
-    close(fd);
-    free(txt);
-    free(g_map);
-    system("leaks a.out");
-    return (0);
-}
+        //fin parsing debut jeu
+        data_t data;
+        int w = cub.rw;
+        int h = cub.rh;
+        if ((data.mlx_ptr = mlx_init()) == NULL)
+            return (EXIT_FAILURE);
+        if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
+            return (EXIT_FAILURE);
+        t_img *txt = ft_prepare_txt(cub, data);
+        //game.w = w;
+        //game.h = h;
+        t_wrap wrap;
+        wrap.data = &data;
+        wrap.game = &game;
+        wrap.cub = &cub;
+        wrap.img = txt;
+        mlx_key_hook(data.mlx_win, done, &wrap);
+        //mlx_hook()
+        fct_test(data, -1, &game, &cub, txt);
+        close(fd);
+        free(txt);
+        free(g_map);
+        system("leaks a.out");
+        return (0);
+    }
