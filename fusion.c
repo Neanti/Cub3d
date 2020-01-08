@@ -18,7 +18,6 @@
 #define PURPLE get_color(255, 0, 255)
 #define YELLOW get_color(255, 251, 0)
 
-
 // size_t strlcpy(char *dst, const char *src, size_t dsize)
 // {
 //     const char *osrc = src;
@@ -382,7 +381,6 @@ char *add_char(char *s, int n)
     int i = 0;
     while (i < l)
     {
-        //out[i] = s[i];
         i++;
     }
     out[i] = n + 48;
@@ -697,6 +695,38 @@ void ft_sprite_line(t_img img, data_t data, double wallX, int h, int x, int star
     }
 }
 
+double dist(double posX, double posY, int sx, int sy)
+{
+    return (((posX - sx) * (posX - sx) + (posY - sy) * (posY - sy)));
+}
+
+void    sort_sprite(t_cub *cub, double posX, double posY)
+{
+    int i = 0;
+    int b = 1;
+    while(b == 1)
+    {
+        b = 0;
+        while(cub->sx[i + 1] >= 0)
+        {
+            double n1 = dist(posX, posY, cub->sx[i], cub->sy[i]);
+            double n2 = dist(posX, posY, cub->sx[i + 1], cub->sy[i + 1]);
+            if (n2 > n1)
+            {
+                b = 1;
+                int t1 = cub->sx[i];
+                int t2 = cub->sy[i];
+                cub->sx[i] = cub->sx[i + 1];
+                cub->sy[i] = cub->sy[i + 1];
+                cub->sx[i + 1] = t1;
+                cub->sy[i + 1] = t2;
+            }
+            i++;
+        }
+    }    
+}
+
+
 void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 {
     if (key == 53)
@@ -718,179 +748,192 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 
     //while (1)
     //{
-        //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
-        //posX = 13;
-        for (int x = 0; x < w; x++) // w=width
+    //printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
+    //posX = 13;
+    for (int x = 0; x < w; x++) // w=width
+    {
+        double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
+        double rayDirX = dirX + planeX * cameraX;
+        double rayDirY = dirY + planeY * cameraX;
+        int mapX = (int)posX; // cast (int)double a verif
+        int mapY = (int)posY; // represente coord rayon sur map(donc int)
+        //printf("mX =%i, mY=%i\n",mapX,mapY);
+        double sideDistX;
+        double sideDistY;
+        //printf("rdX=%f, rdY=%f, cmX=%f\n", rayDirX,rayDirY, cameraX);
+        double deltaDistX = fabs(1 / rayDirX);
+        double deltaDistY = fabs(1 / rayDirY); // Voir double/int
+        //printf("%f %f delta\n",deltaDistX, deltaDistY);
+        double perpWallDist;
+
+        int stepX;
+        int stepY;
+
+        int hit = 0;
+        int side;
+        if (rayDirX < 0)
         {
-            double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
-            double rayDirX = dirX + planeX * cameraX;
-            double rayDirY = dirY + planeY * cameraX;
-            int mapX = (int)posX; // cast (int)double a verif
-            int mapY = (int)posY; // represente coord rayon sur map(donc int)
-            //printf("mX =%i, mY=%i\n",mapX,mapY);
-            double sideDistX;
-            double sideDistY;
-            //printf("rdX=%f, rdY=%f, cmX=%f\n", rayDirX,rayDirY, cameraX);
-            double deltaDistX = fabs(1 / rayDirX);
-            double deltaDistY = fabs(1 / rayDirY); // Voir double/int
-            //printf("%f %f delta\n",deltaDistX, deltaDistY);
-            double perpWallDist;
-
-            int stepX;
-            int stepY;
-
-            int hit = 0;
-            int side;
-            if (rayDirX < 0)
-            {
-                stepX = -1;
-                sideDistX = (posX - mapX) * deltaDistX;
-            }
-            else
-            {
-                stepX = 1;
-                sideDistX = (mapX + 1.0 - posX) * deltaDistX;
-            }
-            if (rayDirY < 0)
-            {
-                stepY = -1;
-                sideDistY = (posY - mapY) * deltaDistY;
-            }
-            else
-            {
-                stepY = 1;
-                sideDistY = (mapY + 1.0 - posY) * deltaDistY;
-            }
-            // int sprite = 0;
-            // int spriteX = 0;
-            // int allow = 0;
-            //printf("EDGE\n");
-            int i = 0;
-            while (hit == 0)
-            {
-                if (sideDistX < sideDistY)
-                {
-                    sideDistX += deltaDistX;
-                    mapX += stepX;
-                    side = 0;
-                }
-                else
-                {
-                    sideDistY += deltaDistY;
-                    mapY += stepY;
-                    side = 1;
-                }
-                //printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
-                if (cub->map[mapX][mapY] - 48 == 1)
-                {
-                    //printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
-                    hit = 1;
-                }
-                // if (cub->map[mapX][mapY] - 48 == 2 && sprite == 0)
-                // {
-                //     sprite = 1;
-                // }
-                if (side == 0)
-                    perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
-                else
-                    perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
-
-                int lineHeight = (int)(h / perpWallDist);
-
-                int drawStart = -lineHeight / 2 + h / 2;
-                int drawEnd = lineHeight / 2 + h / 2;
-                int color;
-                double wallX; //where exactly the wall was hit
-                if (side == 0)
-                    wallX = posY + perpWallDist * rayDirY;
-                else
-                    wallX = posX + perpWallDist * rayDirX;
-                wallX -= floor((wallX));
-                //x coordinate on the texture
-                int texX = (int)(wallX * (double)txt[4].nbc);
-                if (side == 0 && rayDirX > 0)
-                    texX = txt[0].nbc - texX - 1; // changer txt nb
-                if (side == 1 && rayDirY < 0)
-                    texX = txt[0].nbc - texX - 1;
-                int nbt;
-                if (rayDirX > 0) // north ?
-                {
-                    nbt = 0;
-                }
-                else
-                {
-                    nbt = 1;
-                }
-                if (side == 1 && rayDirY > 0) // west ?
-                {
-                    nbt = 2;
-                }
-                else if (side == 1) //east ?
-                {
-                    nbt = 3;
-                }
-                if (hit == 1)
-                {
-                    ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
-                    //printf("draw WALL %i\n",i);
-                    //allow = 1;
-                }
-                // if (sprite == 1 && allow == 1)
-                // {
-                //     //printf("linesprite %i\n",i);
-                //     ft_sprite_line(txt[4], data, wallX, h, x,drawStart, drawEnd);
-                //     sprite = -1;
-                //     allow = 0;
-                // }
-                ZBuffer[x] = perpWallDist;
-            }
-            //FORMER
+            stepX = -1;
+            sideDistX = (posX - mapX) * deltaDistX;
         }
-        // CAST SPRITE
-            double spriteX = cub->sx[0] + 0.5 - posX;
-            double spriteY = cub->sy[0] + 0.5 - posY;
-            // printf("spX=%f, spY=%f\n",spriteX, spriteY);
-            double invDet = 1.0 / (planeX * dirY - dirX * planeY);
-            double transformX = invDet * (dirY * spriteX - dirX * spriteY);
-            double transformY = invDet * (-1 * planeY * spriteX + planeX * spriteY);
-
-            int spriteScreenX = (int)((w / 2) * (1 + transformX / transformY));
-
-            int spriteHeight = abs((int)(h / transformY));
-            int drawStartY = -1 * spriteHeight / 2 + h / 2;
-            if (drawStartY < 0)
-                drawStartY = 0;
-            int drawEndY = spriteHeight / 2 + h / 2;
-            if (drawEndY >= h)
-                drawEndY = h - 1;
-
-            int spriteWidth = abs((int)(h / transformY));
-            int drawStartX = -1 * spriteWidth / 2 + spriteScreenX;
-            if (drawStartX < 0)
-                drawStartX = 0;
-            int drawEndX = spriteWidth / 2 + spriteScreenX;
-            if (drawEndX >= w)
-                drawEndX = w - 1;
-            //printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
-            for (int stripe = drawStartX; stripe < drawEndX; stripe++)
+        else
+        {
+            stepX = 1;
+            sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+        }
+        if (rayDirY < 0)
+        {
+            stepY = -1;
+            sideDistY = (posY - mapY) * deltaDistY;
+        }
+        else
+        {
+            stepY = 1;
+            sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+        }
+        // int sprite = 0;
+        // int spriteX = 0;
+        // int allow = 0;
+        //printf("EDGE\n");
+        int i = 0;
+        while (hit == 0)
+        {
+            if (sideDistX < sideDistY)
             {
-                int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * txt[4].nbl / spriteWidth) / 256);
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
+            }
+            else
+            {
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
+            }
+            //printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
+            if (cub->map[mapX][mapY] - 48 == 1)
+            {
+                //printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
+                hit = 1;
+            }
+            // if (cub->map[mapX][mapY] - 48 == 2 && sprite == 0)
+            // {
+            //     sprite = 1;
+            // }
+            if (side == 0)
+                perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+            else
+                perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
 
-                if (transformY > 0 && stripe > 0 && stripe < w && transformY < ZBuffer[stripe])
+            int lineHeight = (int)(h / perpWallDist);
+
+            int drawStart = -lineHeight / 2 + h / 2;
+            int drawEnd = lineHeight / 2 + h / 2;
+            int color;
+            double wallX; //where exactly the wall was hit
+            if (side == 0)
+                wallX = posY + perpWallDist * rayDirY;
+            else
+                wallX = posX + perpWallDist * rayDirX;
+            wallX -= floor((wallX));
+            //x coordinate on the texture
+            int texX = (int)(wallX * (double)txt[4].nbc);
+            if (side == 0 && rayDirX > 0)
+                texX = txt[0].nbc - texX - 1; // changer txt nb
+            if (side == 1 && rayDirY < 0)
+                texX = txt[0].nbc - texX - 1;
+            int nbt;
+            if (rayDirX > 0) // north ?
+            {
+                nbt = 0;
+            }
+            else
+            {
+                nbt = 1;
+            }
+            if (side == 1 && rayDirY > 0) // west ?
+            {
+                nbt = 2;
+            }
+            else if (side == 1) //east ?
+            {
+                nbt = 3;
+            }
+            if (hit == 1)
+            {
+                ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
+                //printf("draw WALL %i\n",i);
+                //allow = 1;
+            }
+            // if (sprite == 1 && allow == 1)
+            // {
+            //     //printf("linesprite %i\n",i);
+            //     ft_sprite_line(txt[4], data, wallX, h, x,drawStart, drawEnd);
+            //     sprite = -1;
+            //     allow = 0;
+            // }
+            ZBuffer[x] = perpWallDist;
+        }
+        //FORMER
+    }
+    // CAST SPRITE
+
+    //sort sprite
+
+    sort_sprite(cub, posX, posY);
+
+    for (int i = 0; cub->sx[i] >= 0; i++)
+    {
+        //t
+        double sp = ((posX - cub->sx[i]) * (posX - cub->sx[i]) + (posY - cub->sy[i]) * (posY - cub->sy[i]));
+        printf("DIST DE %i = %f\n", i, sp);
+        //t
+        double spriteX = cub->sx[i] + 0.5 - posX;
+        double spriteY = cub->sy[i] + 0.5 - posY;
+        // printf("spX=%f, spY=%f\n",spriteX, spriteY);
+        double invDet = 1.0 / (planeX * dirY - dirX * planeY);
+        double transformX = invDet * (dirY * spriteX - dirX * spriteY);
+        double transformY = invDet * (-1 * planeY * spriteX + planeX * spriteY);
+
+        int spriteScreenX = (int)((w / 2) * (1 + transformX / transformY));
+
+        int spriteHeight = abs((int)(h / transformY));
+        int drawStartY = -1 * spriteHeight / 2 + h / 2 - 5;
+        if (drawStartY < 0)
+            drawStartY = 0;
+        int drawEndY = spriteHeight / 2 + h / 2;
+        if (drawEndY >= h)
+            drawEndY = h;
+
+        int spriteWidth = abs((int)(h / transformY));
+        int drawStartX = -1 * spriteWidth / 2 + spriteScreenX ;
+        if (drawStartX < 0)
+            drawStartX = 0;
+        printf("DSX= %i\n", drawStartX);
+        int drawEndX = spriteWidth / 2 + spriteScreenX;
+        if (drawEndX >= w)
+            drawEndX = w;
+        //printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
+        for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
+        {
+            int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbl - 0) / spriteWidth) / 256);
+
+            if (transformY > 0 && stripe >= 0 && stripe < w && transformY < ZBuffer[stripe])
+            {
+                for (int y = drawStartY; y < drawEndY ++; y++)
                 {
-                    for (int y = drawStartY; y < drawEndY; y++)
-                    {
-                        int d = (y) * 256 - h * 128 + spriteHeight * 128;
-                        int texY = ((d * txt[4].nbl) / spriteHeight / 256) + 1;
-                        //printf("tX=%i, tY=%i\n", texX + 1, texY);
-                        int color = pick_color(txt[4], texY, texX + 1);
-                        if (color >= 0)
-                            mlx_pixel_put(data.mlx_ptr, data.mlx_win, stripe, y, color);
-                    }
+                    int d = (y) * 256 - h * 128 + spriteHeight * 128;
+                    int texY = ((d * (txt[4].nbc - 10 )) / spriteHeight / 256) + 1;// voir index
+                    printf("tX=%i, tY=%i\n", texX, texY);
+                    int color = pick_color(txt[4], texY + 1, texX + 1);
+                    if (color >= 0)
+                        mlx_pixel_put(data.mlx_ptr, data.mlx_win, stripe, y, color);
                 }
             }
-        printf("CALL LOOP\n");
-        mlx_loop(data.mlx_ptr);
+        }
+    }
+    printf("CALL LOOP\n");
+    mlx_loop(data.mlx_ptr);
     //}
 }
 
@@ -1067,9 +1110,9 @@ void print_map(char **map)
 {
     int i = 0;
     printf("---DEB MAP---\n");
-    while(map[i] != NULL)
+    while (map[i] != NULL)
     {
-        printf("%s\n",map[i]);
+        printf("%s\n", map[i]);
         i++;
     }
     printf("---FIN MAP---\n");
@@ -1080,9 +1123,9 @@ int count_sprite(char **s)
     int i = 0;
     int j = 0;
     int n = 0;
-    while(s[i] != NULL)
+    while (s[i] != NULL)
     {
-        while(s[i][j])
+        while (s[i][j])
         {
             if (s[i][j] == '2')
                 n++;
@@ -1098,14 +1141,16 @@ void locate_sprite(t_cub *cub)
 {
     int nb = count_sprite(cub->map);
     printf("NBS = %i\n", nb);
-    int *x = malloc(sizeof(int) * nb);
-    int *y = malloc(sizeof(int) * nb);
+    int *x = malloc(sizeof(int) * (nb + 1));
+    int *y = malloc(sizeof(int) * (nb + 1));
+    x[nb] = -1;
+    y[nb] = -1;
     int i = 0;
     int j = 0;
     int k = 0;
-    while(cub->map[i] != NULL)
+    while (cub->map[i] != NULL)
     {
-        while(cub->map[i][j])
+        while (cub->map[i][j])
         {
             if (cub->map[i][j] == '2')
             {
