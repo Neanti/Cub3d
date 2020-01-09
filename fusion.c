@@ -916,16 +916,16 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
         //printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
         for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
         {
-            int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbl - 0) / spriteWidth) / 256);
+            int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
 
             if (transformY > 0 && stripe >= 0 && stripe < w && transformY < ZBuffer[stripe])
             {
-                for (int y = drawStartY; y < drawEndY ++; y++)
+                for (int y = drawStartY; y < drawEndY; y++)
                 {
                     int d = (y) * 256 - h * 128 + spriteHeight * 128;
-                    int texY = ((d * (txt[4].nbc - 10 )) / spriteHeight / 256) + 1;// voir index
-                    printf("tX=%i, tY=%i\n", texX, texY);
-                    int color = pick_color(txt[4], texY + 1, texX + 1);
+                    int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)  + 1;// voir index
+                    printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
+                    int color = pick_color(txt[4], texY, texX + 1);
                     if (color >= 0)
                         mlx_pixel_put(data.mlx_ptr, data.mlx_win, stripe, y, color);
                 }
