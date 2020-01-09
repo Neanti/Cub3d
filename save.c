@@ -70,13 +70,12 @@ typedef struct	data_s
 
 typedef struct	s_info
 {
-	double	posX;
-	double	posY;
-	double	dirX;
-	double	dirY;
-	double	planeX;
-	double	planeY;
-	int		startO;
+	double posX;
+	double posY;
+	double dirX;
+	double dirY;
+	double planeX;
+	double planeY;
 	//int h;
 	//int w;
 }				t_info;
@@ -574,7 +573,15 @@ double degree2radian(double d)
 	return (r);
 }
 
-void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX)
+void	pixel_put(int stripe, int y, int color, char *out)
+{
+	int		i;
+
+	i = 0;
+}
+
+
+void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out)
 {
 	//printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
 	int i = 0;
@@ -587,9 +594,9 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	while (i < j)
 	{
 		if (i < start)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, 1254100);
+			pixel_put(x, i, 9999, out);
 		else if (i > end)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, 0);
+			pixel_put(x, i, 123, out);
 		else
 		{
 			// if (nbt == 4)
@@ -610,7 +617,7 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	}
 }
 
-void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt);
+void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *out);
 
 void rot_vec(double a, t_info *game)
 {
@@ -637,76 +644,6 @@ double ft_calc_vec(double x, double y, double rX, double rY)
 	co = acos(co);
 	co = co * (180 / M_PI);
 	return (co);
-}
-
-int done(int key, void *a)
-{
-	t_wrap *wrap = a;
-	t_info *game = wrap->game;
-	data_t *data = wrap->data;
-	t_cub *cub = wrap->cub;
-	t_img *txt = wrap->img;
-	//printf("DONE1 key=%i dirx = %f diry= %f et posx=%f et posY=%f mapx=%i, mapy=%i\n",key, game->dirX, game->dirY, game->posX, game->posY, cub->mx, cub->my);
-	printf("key=%i\n", key);
-	if (key == 53 || key == 65307) // mac ubuntu
-	{
-		printf("LEAVEDONE\n");
-		mlx_destroy_window(data->mlx_ptr, data->mlx_win);
-		exit(0);
-		return (0);
-	}
-	if (key == 13 || key == 122) // avance 13 mac 122 ubuntu
-	{
-		game->posX += game->dirX * 0.8;
-		game->posY += game->dirY * 0.8;
-		if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
-		{
-			game->posX -= game->dirX * 0.8;
-			game->posY -= game->dirY * 0.8;
-		}
-	}
-	else if (key == 1 || key == 115) // recule 1 mac 115 ubuntu
-	{
-		game->posX -= game->dirX * 0.8;
-		game->posY -= game->dirY * 0.8;
-		if (game->posX >= cub->mx - 1 || game->posX <= 1 || game->posY >= cub->my - 1 || game->posY <= 1)
-		{
-			game->posX += game->dirX * 0.8;
-			game->posY += game->dirY * 0.8;
-		}
-	}
-	else if (key == 0 || key == 113) //rot gauche 0 mac 113 ubuntu
-	{
-		rot_vec(-20 * game->startO, game);
-	}
-	else if (key == 2 || key == 100) //rot droite 14 mac 100 ubuntu
-	{
-		rot_vec(20 * game->startO, game);
-	}
-	else
-	{
-	}
-	//printf("DONE2 key=%i dirx = %f diry= %f et posx=%f et posY=%f\n",key, game->dirX, game->dirY, game->posX, game->posY);
-	//printf("posx=%f done\n",game.posX);
-	fct_test(*data, key, game, cub, txt);
-	return (1);
-}
-
-void ft_sprite_line(t_img img, data_t data, double wallX, int h, int x, int start, int end)
-{
-	int i = start;
-	int col = round(wallX * (img.nbc - 1)) + 1;
-	int color;
-	//printf("DRAW SPRITE\n");
-	while (i < end)
-	{
-		color = pick_color(img, (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col);
-		// if (color != -1)
-		// printf("color of x=%i,y=%i is %i\n", (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col, color);
-		if (color != -1)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
-		i++;
-	}
 }
 
 double dist(double posX, double posY, int sx, int sy)
@@ -741,7 +678,7 @@ void	sort_sprite(t_cub *cub, double posX, double posY)
 }
 
 
-void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
+void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *out)
 {
 	if (key == 53)
 	{
@@ -875,7 +812,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 			}
 			if (hit == 1)
 			{
-				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
+				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out);
 				//printf("draw WALL %i\n",i);
 				//allow = 1;
 			}
@@ -938,16 +875,16 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 				{
 					int d = (y) * 256 - h * 128 + spriteHeight * 128;
 					int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)	+ 1;// voir index
-					//printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
+					printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
 					int color = pick_color(txt[4], texY, texX + 1);
 					if (color >= 0)
-						mlx_pixel_put(data.mlx_ptr, data.mlx_win, stripe, y, color);
+						pixel_put(stripe, y, color, out);
 				}
 			}
 		}
 	}
 	printf("CALL LOOP\n");
-	mlx_loop(data.mlx_ptr);
+	//mlx_loop(data.mlx_ptr);
 	//}
 }
 
@@ -1053,7 +990,6 @@ void locate_player(t_info *game, t_cub *cub)
 				game->dirY = 0;
 				game->planeX = 0;
 				game->planeY = 0.66;
-				game->startO = -1;
 				return;
 			}
 			else if (cub->map[i][j] == 'E')
@@ -1066,7 +1002,6 @@ void locate_player(t_info *game, t_cub *cub)
 				game->dirY = 1;
 				game->planeY = 0;
 				game->planeX = 0.66;
-				game->startO = -1;
 				return;
 			}
 			else if (cub->map[i][j] == 'W')
@@ -1079,7 +1014,6 @@ void locate_player(t_info *game, t_cub *cub)
 				game->dirY = -1;
 				game->planeY = 0;
 				game->planeX = 0.66;
-				game->startO = 1;
 				return;
 			}
 			else if (cub->map[i][j] == 'S')
@@ -1092,7 +1026,6 @@ void locate_player(t_info *game, t_cub *cub)
 				game->dirY = 0;
 				game->planeX = 0;
 				game->planeY = 0.66;
-				game->startO = 1;
 				return;
 			}
 			j++;
@@ -1185,6 +1118,13 @@ void locate_sprite(t_cub *cub)
 	cub->sy = y;
 }
 
+char *prepare_out(int w, int h)
+{
+	char *out;
+
+	out = malloc(sizeof(char) * )
+}
+
 int main(int ac, char **argv)
 {
 	if (ac == 3)
@@ -1272,7 +1212,7 @@ int main(int ac, char **argv)
 	//printf("x1=%i,y1=%i,x2=%i,y2=%i\n",cub.sx[0],cub.sy[0],cub.sx[1],cub.sy[1]);
 	//fin parsing debut jeu
 	// SaVE
-
+	
 	// FIN SAVE
 	
 	data_t data;
@@ -1290,12 +1230,14 @@ int main(int ac, char **argv)
 	wrap.game = &game;
 	wrap.cub = &cub;
 	wrap.img = txt;
-	mlx_key_hook(data.mlx_win, done, &wrap);
+	//mlx_key_hook(data.mlx_win, done, &wrap);
 	//mlx_hook()
-	fct_test(data, -1, &game, &cub, txt);
+	char *out;
+	out = prepare_out(w,h);
+	fct_test(data, -1, &game, &cub, txt, out);
 	close(fd);
 	free(txt);
 	free(g_map);
-	system("leaks a.out");
+	//system("leaks a.out");
 	return (0);
 }
