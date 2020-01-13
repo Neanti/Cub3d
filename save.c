@@ -103,7 +103,7 @@ int get_color(int r, int g, int b)
 
 void print_cub(t_cub c)
 {
-	printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s, mx=%i, my=%i\n---FIN---\n", c.rw, c.rh, c.F, c.C, c.NO, c.SO, c.WE, c.EA, c.S, c.mx, c.my);
+	////printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s, mx=%i, my=%i\n---FIN---\n", c.rw, c.rh, c.F, c.C, c.NO, c.SO, c.WE, c.EA, c.S, c.mx, c.my);
 }
 
 int check_ext(char *s)
@@ -209,7 +209,7 @@ int arrange(char **s)
 
 int check_id(char *s)
 {
-	//printf("checkid de %s\n\n",s);
+	//////printf("checkid de %s\n\n",s);
 	if (!ft_strncmp(s, "R", 10))
 	{
 		return (1);
@@ -245,6 +245,9 @@ int check_id(char *s)
 	else
 		return (-1);
 }
+
+void ft_put_int(int n, char **s, int of);
+
 
 void fill_cub(char **s, t_cub *cub)
 {
@@ -306,14 +309,14 @@ char *swap(char *s)
 	l = ft_strlen(s);
 	k = 7;
 	n = 0;
-	//printf("\nORIG=%s\n",s);
+	//////printf("\nORIG=%s\n",s);
 	while (k != l - 1)
 	{
 
-		//printf("i=%i, k=%i, l=%i\n",i,k,l);
+		//////printf("i=%i, k=%i, l=%i\n",i,k,l);
 		while (i < k)
 		{
-			//printf("\t\ti=%i, k=%i\n",i,k);
+			//////printf("\t\ti=%i, k=%i\n",i,k);
 			c = s[i];
 			s[i] = s[k];
 			s[k] = c;
@@ -324,7 +327,7 @@ char *swap(char *s)
 		i = 8 * n;
 		k = 8 * n + 7;
 	}
-	//printf("SWAP=%s\n",s);
+	//////printf("SWAP=%s\n",s);
 	return (s);
 }
 
@@ -345,7 +348,7 @@ int deal_pack(char *s)
 		b = b / 2;
 		i++;
 	}
-	//printf("PAR=%d\n",so);
+	//////printf("PAR=%d\n",so);
 	return (so);
 }
 
@@ -398,7 +401,7 @@ char *add_char(char *s, int n)
 
 int pick_color(t_img img, int x, int y)
 {
-	// printf("PICK x=%i y=%i\n",x,y);
+	// ////printf("PICK x=%i y=%i\n",x,y);
 	int		i;
 	char	*res;
 	int		k;
@@ -409,31 +412,31 @@ int pick_color(t_img img, int x, int y)
 	res = malloc(sizeof(char) * (img.bpp + 1));
 	res[0] = '\0';
 	k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
-	//printf("%s\n",s);
+	//////printf("%s\n",s);
 	i = 0;
 	//int k = 0;
 	l = 0;
 	s = img.img;
-	//printf("k=%i\n",k);
+	//////printf("k=%i\n",k);
 	while (i < img.bpp)
 	{
-		//printf("\n\nk=%i, i%i\n\n", k,i);
-		//printf("%d", !!((s[k] << l) & 0x80));
+		//////printf("\n\nk=%i, i%i\n\n", k,i);
+		//////printf("%d", !!((s[k] << l) & 0x80));
 		res = add_char(res, !!((s[k] << l) & 0x80));
 		i++;
 		l++;
 		if (i % 8 == 0)
 		{
-			//printf(".");
+			//////printf(".");
 			k++;
 			l = 0;
 		}
 	}
 	color = bin2col(res, img.endian);
-	//printf("RES=%s\n",res);
+	//////printf("RES=%s\n",res);
 	if (res[img.bpp - 1] == '1')
 		color = -1;
-	//printf("END et RES=%s\n",res);
+	//////printf("END et RES=%s\n",res);
 	return (color);
 }
 
@@ -504,7 +507,7 @@ int is_closed(char *s)
 	int	i;
 
 	i = 0;
-	printf("1st part border\n");
+	////printf("1st part border\n");
 	while (s[i] != '\n')
 	{
 		if (!(s[i] == '1' || s[1] == ' '))
@@ -518,7 +521,7 @@ int is_closed(char *s)
 			return (0);
 		i--;
 	}
-	printf("2nd part border\n");
+	////printf("2nd part border\n");
 	i = 0;
 	while (s[i])
 	{
@@ -545,10 +548,10 @@ int check_border(char *s)
 			return (0);
 		i++;
 	}
-	printf("2nd part check map\n");
+	////printf("2nd part check map\n");
 	if (!is_closed(s))
 	{
-		printf("PAS CLOS\n");
+		////printf("PAS CLOS\n");
 		return (0);
 	}
 	return (1);
@@ -573,17 +576,16 @@ double degree2radian(double d)
 	return (r);
 }
 
-void	pixel_put(int stripe, int y, int color, char *out)
+void	pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
 {
-	int		i;
-
-	i = 0;
+	printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (cub->rw - stripe + cub->rh - y) * 4);
+	ft_put_int(color, &out, 54 + (cub->rw - stripe + cub->rh - y) * 4);
 }
 
 
-void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out)
+void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out, t_cub *cub)
 {
-	//printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
+	//////printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
 	int i = 0;
 	int col;
 	int color;
@@ -594,24 +596,24 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	while (i < j)
 	{
 		if (i < start)
-			pixel_put(x, i, 9999, out);
+			pixel_put(x, i, cub->F, out, cub);
 		else if (i > end)
-			pixel_put(x, i, 123, out);
+			pixel_put(x, i, cub->C, out, cub);
 		else
 		{
 			// if (nbt == 4)
-			// printf("i=%i, x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\npick c=%i, l=%i\n",i,x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc, col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
-			//printf("coord= col=%i l=%d \n",col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
+			// ////printf("i=%i, x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\npick c=%i, l=%i\n",i,x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc, col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
+			//////printf("coord= col=%i l=%d \n",col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
 			color = pick_color(txt[nbt], (int)round(((i - start) / (double)(end - start) * (txt[nbt].nbl - 1))) + 1, col);
 			// if (nbt == 4)
-			// printf("color=%i\n",color);
+			// ////printf("color=%i\n",color);
 			//color = pick_color(txt[nbt], col,round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1	);
 			//d = i * 256 - j * 128 + (end - start) * 128;
 			//texY = ((d * txt[nbt].nbl) / (end - start)) / 256;
 			//color = pick_color(txt[nbt], texY + 1, d + 1);
 			// if (color == -1)
-			//	 printf("BLO\n");
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
+			//	 ////printf("BLO\n");
+			pixel_put(x, i, color, out, cub);
 		}
 		i++;
 	}
@@ -685,7 +687,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 		mlx_destroy_window(data.mlx_ptr, data.mlx_win);
 		return;
 	}
-	//printf("MOVE\n");
+	//////printf("MOVE\n");
 	int w = cub->rw;
 	int h = cub->rh;
 	double posX = game->posX;
@@ -699,7 +701,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 
 	//while (1)
 	//{
-	//printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
+	//////printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
 	//posX = 13;
 	for (int x = 0; x < w; x++) // w=width
 	{
@@ -708,13 +710,13 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 		double rayDirY = dirY + planeY * cameraX;
 		int mapX = (int)posX; // cast (int)double a verif
 		int mapY = (int)posY; // represente coord rayon sur map(donc int)
-		//printf("mX =%i, mY=%i\n",mapX,mapY);
+		//////printf("mX =%i, mY=%i\n",mapX,mapY);
 		double sideDistX;
 		double sideDistY;
-		//printf("rdX=%f, rdY=%f, cmX=%f\n", rayDirX,rayDirY, cameraX);
+		//////printf("rdX=%f, rdY=%f, cmX=%f\n", rayDirX,rayDirY, cameraX);
 		double deltaDistX = fabs(1 / rayDirX);
 		double deltaDistY = fabs(1 / rayDirY); // Voir double/int
-		//printf("%f %f delta\n",deltaDistX, deltaDistY);
+		//////printf("%f %f delta\n",deltaDistX, deltaDistY);
 		double perpWallDist;
 
 		int stepX;
@@ -745,7 +747,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 		// int sprite = 0;
 		// int spriteX = 0;
 		// int allow = 0;
-		//printf("EDGE\n");
+		//////printf("EDGE\n");
 		int i = 0;
 		while (hit == 0)
 		{
@@ -761,10 +763,10 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 				mapY += stepY;
 				side = 1;
 			}
-			//printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
+			//////printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
 			if (cub->map[mapX][mapY] - 48 == 1)
 			{
-				//printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
+				//////printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
 				hit = 1;
 			}
 			// if (cub->map[mapX][mapY] - 48 == 2 && sprite == 0)
@@ -812,13 +814,13 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 			}
 			if (hit == 1)
 			{
-				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out);
-				//printf("draw WALL %i\n",i);
+				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out, cub);
+				//////printf("draw WALL %i\n",i);
 				//allow = 1;
 			}
 			// if (sprite == 1 && allow == 1)
 			// {
-			//	 //printf("linesprite %i\n",i);
+			//	 //////printf("linesprite %i\n",i);
 			//	 ft_sprite_line(txt[4], data, wallX, h, x,drawStart, drawEnd);
 			//	 sprite = -1;
 			//	 allow = 0;
@@ -837,11 +839,11 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 	{
 		//t
 		double sp = ((posX - cub->sx[i]) * (posX - cub->sx[i]) + (posY - cub->sy[i]) * (posY - cub->sy[i]));
-		printf("DIST DE %i = %f\n", i, sp);
+		////printf("DIST DE %i = %f\n", i, sp);
 		//t
 		double spriteX = cub->sx[i] + 0.5 - posX;
 		double spriteY = cub->sy[i] + 0.5 - posY;
-		// printf("spX=%f, spY=%f\n",spriteX, spriteY);
+		// ////printf("spX=%f, spY=%f\n",spriteX, spriteY);
 		double invDet = 1.0 / (planeX * dirY - dirX * planeY);
 		double transformX = invDet * (dirY * spriteX - dirX * spriteY);
 		double transformY = invDet * (-1 * planeY * spriteX + planeX * spriteY);
@@ -860,11 +862,11 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 		int drawStartX = -1 * spriteWidth / 2 + spriteScreenX ;
 		if (drawStartX < 0)
 			drawStartX = 0;
-		printf("DSX= %i\n", drawStartX);
+		////printf("DSX= %i\n", drawStartX);
 		int drawEndX = spriteWidth / 2 + spriteScreenX;
 		if (drawEndX >= w)
 			drawEndX = w;
-		//printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
+		//////printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
 		for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
 		{
 			int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
@@ -875,15 +877,15 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 				{
 					int d = (y) * 256 - h * 128 + spriteHeight * 128;
 					int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)	+ 1;// voir index
-					printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
+					////printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
 					int color = pick_color(txt[4], texY, texX + 1);
 					if (color >= 0)
-						pixel_put(stripe, y, color, out);
+						pixel_put(stripe, y, color, out, cub);
 				}
 			}
 		}
 	}
-	printf("CALL LOOP\n");
+	////printf("CALL LOOP\n");
 	//mlx_loop(data.mlx_ptr);
 	//}
 }
@@ -936,7 +938,7 @@ char **remove_space(char **s, int *x, int *y)
 		}
 		i++;
 	}
-	printf("calc mapx=%i, mapy=%i\n", i, j);
+	////printf("calc mapx=%i, mapy=%i\n", i, j);
 	*x = i;
 	*y = (j + 1) / 2;
 	return (out);
@@ -944,7 +946,7 @@ char **remove_space(char **s, int *x, int *y)
 
 char **ft_prepare_map(char *m, int *x, int *y)
 {
-	printf("PREP MAP %s\n", m);
+	////printf("PREP MAP %s\n", m);
 	int i;
 	int j;
 	char **out;
@@ -954,7 +956,7 @@ char **ft_prepare_map(char *m, int *x, int *y)
 	out = ft_split(m, '\n');
 	/*while(out[i])
 		{
-		printf("RES=%s\n",out[i]);
+		////printf("RES=%s\n",out[i]);
 		j = 0;
 		while(out[i][j])
 		{
@@ -964,7 +966,7 @@ char **ft_prepare_map(char *m, int *x, int *y)
 		i++;
 		}*/
 	out = remove_space(out, x, y);
-	printf("PREP OUT=%s\n", *out);
+	//printf("PREP OUT=%s\n", *out);
 	return (out);
 }
 
@@ -972,17 +974,17 @@ void locate_player(t_info *game, t_cub *cub)
 {
 	int i;
 	int j;
-	printf("LOCATE\n");
+	//printf("LOCATE\n");
 	i = 0;
 	while (cub->map[i])
 	{
 		j = 0;
 		while (cub->map[i][j])
 		{
-			//printf("CHECK %i\n",cub->map[i][j]);
+			////printf("CHECK %i\n",cub->map[i][j]);
 			if (cub->map[i][j] == 'N')
 			{
-				printf("player : x=%i, j=%i et orientation=N\n", i, j);
+				//printf("player : x=%i, j=%i et orientation=N\n", i, j);
 				// = N
 				game->posX = i + 0.5;
 				game->posY = j + 0.5;
@@ -994,7 +996,7 @@ void locate_player(t_info *game, t_cub *cub)
 			}
 			else if (cub->map[i][j] == 'E')
 			{
-				printf("player : x=%i, j=%i et orientation=E\n", i, j);
+				//printf("player : x=%i, j=%i et orientation=E\n", i, j);
 				//E
 				game->posX = i + 0.5;
 				game->posY = j + 0.5;
@@ -1006,7 +1008,7 @@ void locate_player(t_info *game, t_cub *cub)
 			}
 			else if (cub->map[i][j] == 'W')
 			{
-				printf("player : x=%i, j=%i et orientation=W\n", i, j);
+				//printf("player : x=%i, j=%i et orientation=W\n", i, j);
 				//W
 				game->posX = i + 0.5;
 				game->posY = j + 0.5;
@@ -1018,7 +1020,7 @@ void locate_player(t_info *game, t_cub *cub)
 			}
 			else if (cub->map[i][j] == 'S')
 			{
-				printf("player : x=%i, j=%i et orientation=S\n", i, j);
+				//printf("player : x=%i, j=%i et orientation=S\n", i, j);
 				//S
 				game->posX = i + 0.5;
 				game->posY = j + 0.5;
@@ -1041,32 +1043,32 @@ t_img *ft_prepare_txt(t_cub cub, data_t data)
 	int i = 0;
 	out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.NO, &(out[0].nbc), &(out[0].nbl));
 	out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp), &(out[0].lsize), &(out[0].endian));
-	printf("1 SUCCES\n");
+	//printf("1 SUCCES\n");
 	out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.SO, &(out[1].nbc), &(out[1].nbl));
 	out[1].img = mlx_get_data_addr(out[1].img, &(out[1].bpp), &(out[1].lsize), &(out[1].endian));
-	printf("2 SUCCES\n");
+	//printf("2 SUCCES\n");
 	out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.EA, &(out[2].nbc), &(out[2].nbl));
 	out[2].img = mlx_get_data_addr(out[2].img, &(out[2].bpp), &(out[2].lsize), &(out[2].endian));
-	printf("3 SUCCES\n");
+	//printf("3 SUCCES\n");
 	out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.WE, &(out[3].nbc), &(out[3].nbl));
 	out[3].img = mlx_get_data_addr(out[3].img, &(out[3].bpp), &(out[3].lsize), &(out[3].endian));
-	printf("4 SUCCES\n");
+	//printf("4 SUCCES\n");
 	out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.S, &(out[4].nbc), &(out[4].nbl));
 	out[4].img = mlx_get_data_addr(out[4].img, &(out[4].bpp), &(out[4].lsize), &(out[4].endian));
-	printf("5 SUCCES\n");
+	//printf("5 SUCCES\n");
 	return (out);
 }
 
 void print_map(char **map)
 {
 	int i = 0;
-	printf("---DEB MAP---\n");
+	//printf("---DEB MAP---\n");
 	while (map[i] != NULL)
 	{
-		printf("%s\n", map[i]);
+		//printf("%s\n", map[i]);
 		i++;
 	}
-	printf("---FIN MAP---\n");
+	//printf("---FIN MAP---\n");
 }
 
 int count_sprite(char **s)
@@ -1091,7 +1093,7 @@ int count_sprite(char **s)
 void locate_sprite(t_cub *cub)
 {
 	int nb = count_sprite(cub->map);
-	printf("NBS = %i\n", nb);
+	//printf("NBS = %i\n", nb);
 	int *x = malloc(sizeof(int) * (nb + 1));
 	int *y = malloc(sizeof(int) * (nb + 1));
 	x[nb] = -1;
@@ -1118,33 +1120,82 @@ void locate_sprite(t_cub *cub)
 	cub->sy = y;
 }
 
+void ft_put_int(int n, char **s, int of)
+{
+	int tmp = n;
+	tmp = tmp>>24;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][3+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp>>16;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][2+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp>>8;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][1+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][0+of] = tmp;
+}
+
 char *prepare_out(int w, int h)
 {
 	char *out;
-
-	out = malloc(sizeof(char) * )
+	int tailletot = (w * h * 4) + 54 / 4;
+	out = malloc(sizeof(char) * ((w * h * 4) + 54));
+	out[0] = 'B';
+	out[1] = 'M';
+	ft_put_int(tailletot, &out, 2);
+	//printf("out=%s\n\n",out);
+	int offset = 54;
+	ft_put_int(offset, &out, 10);
+	int tailletete = 40;
+	ft_put_int(tailletete, &out,14);
+	ft_put_int(w, &out, 18);
+	ft_put_int(h, &out, 22);
+	out[26] = (char)1;
+	out[27] = (char)0; // nbplan
+	int bpp = 32;
+	ft_put_int(bpp, &out, 28);
+	int compression = 0;
+	ft_put_int(compression, &out, 30); // overlap bpp !!!
+	int tailleimg = w * h;
+	ft_put_int(tailleimg, &out, 34);
+	int resH = 1000;
+	int resV = 1000;
+	ft_put_int(resH, &out, 38);
+	ft_put_int(resV, &out, 42);
+	ft_put_int(0, &out, 46);
+	ft_put_int(0, &out, 50);
+	//out[55] = '\0';
+	//write(1, out, 56);
+	return (out);
 }
 
 int main(int ac, char **argv)
 {
 	if (ac == 3)
 	{
-		printf("save img\n");
+		//printf("save img\n");
 	}
 	else if (ac == 1)
 	{
-		printf("Error\n Pas de fichier en argument\n");
+		//printf("Error\n Pas de fichier en argument\n");
 		return (0);
 	}
 	if (check_ext(argv[1]) == 0)
 	{
-		printf("Error\n Extension fausse\n");
+		//printf("Error\n Extension fausse\n");
 		return (0);
 	}
 	int fd = open(argv[1], O_RDONLY);
 	if (read(fd, NULL, 0) < 0)
 	{
-		printf("Error\nEchec de read\n");
+		//printf("Error\nEchec de read\n");
 		return (0);
 	}
 
@@ -1157,20 +1208,20 @@ int main(int ac, char **argv)
 
 	map = malloc(sizeof(char));
 	map[0] = '\0';
-	printf("fd=%i\n", fd);
+	//printf("fd=%i\n", fd);
 	while ((k = get_next_line(fd, &line)) != 0)
 	{
 		if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
 		{
-			printf("Error\nMap coupé ou manque de mur\n");
+			//printf("Error\nMap coupé ou manque de mur\n");
 			return (0);
 		}
 		if (stat == 0)
 		{
-			//printf("TOFILL line=%s\n", line);
+			////printf("TOFILL line=%s\n", line);
 			fill_cub(ft_split(line, ' '), &cub);
 		}
-		//printf("line=%s\n", line);
+		////printf("line=%s\n", line);
 		if (line[0] == '1')
 		{
 			oldmap = map;
@@ -1181,35 +1232,35 @@ int main(int ac, char **argv)
 		}
 		free(line);
 	}
-	//printf("line=%s\n", line);
+	////printf("line=%s\n", line);
 	if (try_path(&cub) == -1)
 	{
-		printf("Error\nChemins non valides");
+		//printf("Error\nChemins non valides");
 		return (0);
 	}
 	if (cub.F == -1 || cub.C == -1)
 	{
-		printf("Error\nMauvaises couleurs\n");
+		//printf("Error\nMauvaises couleurs\n");
 		return (0);
 	}
-	printf("---MAP---\n%s---FIN MAP---\n", map);
+	//printf("---MAP---\n%s---FIN MAP---\n", map);
 	int border = check_border(map);
 	if (!border)
 	{
-		printf("Error\nManque de mur\n");
+		//printf("Error\nManque de mur\n");
 		return (0);
 	}
 
 	char **g_map;
 	g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-	//printf("M01 %i %i\n", g_map[0][0], g_map[0][1]);
+	////printf("M01 %i %i\n", g_map[0][0], g_map[0][1]);
 	print_cub(cub);
 	cub.map = g_map;
 	t_info game = prepare_info();
 	locate_player(&game, &cub);
 	print_map(g_map);
 	locate_sprite(&cub);
-	//printf("x1=%i,y1=%i,x2=%i,y2=%i\n",cub.sx[0],cub.sy[0],cub.sx[1],cub.sy[1]);
+	////printf("x1=%i,y1=%i,x2=%i,y2=%i\n",cub.sx[0],cub.sy[0],cub.sx[1],cub.sy[1]);
 	//fin parsing debut jeu
 	// SaVE
 	
@@ -1220,8 +1271,8 @@ int main(int ac, char **argv)
 	int h = cub.rh;
 	if ((data.mlx_ptr = mlx_init()) == NULL)
 		return (EXIT_FAILURE);
-	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
-		return (EXIT_FAILURE);
+	// if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
+	// 	return (EXIT_FAILURE);
 	t_img *txt = ft_prepare_txt(cub, data);
 	//game.w = w;
 	//game.h = h;
@@ -1234,7 +1285,12 @@ int main(int ac, char **argv)
 	//mlx_hook()
 	char *out;
 	out = prepare_out(w,h);
+	printf("width = %i\n", w);
 	fct_test(data, -1, &game, &cub, txt, out);
+	int oo = open("save.bmp", O_WRONLY);
+	write(oo, out, 5054);
+	write(1, "\n", 1);
+	close(oo);
 	close(fd);
 	free(txt);
 	free(g_map);

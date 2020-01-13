@@ -574,7 +574,7 @@ double degree2radian(double d)
 	return (r);
 }
 
-void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX)
+void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, t_cub *cub)
 {
 	//printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
 	int i = 0;
@@ -587,9 +587,9 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	while (i < j)
 	{
 		if (i < start)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, 1254100);
+			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->F);
 		else if (i > end)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, 0);
+			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->C);
 		else
 		{
 			// if (nbt == 4)
@@ -690,23 +690,6 @@ int done(int key, void *a)
 	//printf("posx=%f done\n",game.posX);
 	fct_test(*data, key, game, cub, txt);
 	return (1);
-}
-
-void ft_sprite_line(t_img img, data_t data, double wallX, int h, int x, int start, int end)
-{
-	int i = start;
-	int col = round(wallX * (img.nbc - 1)) + 1;
-	int color;
-	//printf("DRAW SPRITE\n");
-	while (i < end)
-	{
-		color = pick_color(img, (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col);
-		// if (color != -1)
-		// printf("color of x=%i,y=%i is %i\n", (int)round(((i - start) / (double)(end - start) * (img.nbl - 1))) + 1, col, color);
-		if (color != -1)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
-		i++;
-	}
 }
 
 double dist(double posX, double posY, int sx, int sy)
@@ -875,7 +858,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 			}
 			if (hit == 1)
 			{
-				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX);
+				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX, cub);
 				//printf("draw WALL %i\n",i);
 				//allow = 1;
 			}
