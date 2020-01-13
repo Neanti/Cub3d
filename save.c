@@ -579,7 +579,7 @@ double degree2radian(double d)
 void	pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
 {
 	printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (((cub->rw - stripe) * cub->rh) + cub->rh - y) * 4);
-	ft_put_int(color, &out, 54 + (((cub->rh - y) * cub->rw) + cub->rw - stripe) * 4);
+	ft_put_int(color, &out, 54 + (((cub->rh - y -1) * cub->rw) + cub->rw - stripe - 1) * 4);
 }
 
 
@@ -839,22 +839,24 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 	{
 		//t
 		double sp = ((posX - cub->sx[i]) * (posX - cub->sx[i]) + (posY - cub->sy[i]) * (posY - cub->sy[i]));
-		////printf("DIST DE %i = %f\n", i, sp);
+		printf("DIST DE %i = %f\n", i, sp);
 		//t
 		double spriteX = cub->sx[i] + 0.5 - posX;
 		double spriteY = cub->sy[i] + 0.5 - posY;
-		// ////printf("spX=%f, spY=%f\n",spriteX, spriteY);
+		// printf("spX=%f, spY=%f\n",spriteX, spriteY);
 		double invDet = 1.0 / (planeX * dirY - dirX * planeY);
 		double transformX = invDet * (dirY * spriteX - dirX * spriteY);
 		double transformY = invDet * (-1 * planeY * spriteX + planeX * spriteY);
 
 		int spriteScreenX = (int)((w / 2) * (1 + transformX / transformY));
 
+		int vMoveScreen = (int)(0.0 / transformY);
+
 		int spriteHeight = abs((int)(h / transformY));
-		int drawStartY = -1 * spriteHeight / 2 + h / 2 - 5;
+		int drawStartY = -1 * spriteHeight / 2 + h / 2 + vMoveScreen;
 		if (drawStartY < 0)
 			drawStartY = 0;
-		int drawEndY = spriteHeight / 2 + h / 2;
+		int drawEndY = spriteHeight / 2 + h / 2 + vMoveScreen;
 		if (drawEndY >= h)
 			drawEndY = h;
 
@@ -862,23 +864,26 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 		int drawStartX = -1 * spriteWidth / 2 + spriteScreenX ;
 		if (drawStartX < 0)
 			drawStartX = 0;
-		////printf("DSX= %i\n", drawStartX);
+		printf("DSX= %i\n", drawStartX);
 		int drawEndX = spriteWidth / 2 + spriteScreenX;
 		if (drawEndX >= w)
-			drawEndX = w;
-		//////printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
+			drawEndX = w - 1;
+		//printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
 		for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
 		{
-			int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
+			//int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
+			int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256;
 
 			if (transformY > 0 && stripe >= 0 && stripe < w && transformY < ZBuffer[stripe])
 			{
 				for (int y = drawStartY; y < drawEndY; y++)
 				{
-					int d = (y) * 256 - h * 128 + spriteHeight * 128;
-					int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)	+ 1;// voir index
-					printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
-					int color = pick_color(txt[4], texY, texX + 1);
+					//int d = (y) * 256 - h * 128 + spriteHeight * 128;
+					int d = (y-vMoveScreen) * 256 - h * 128 + spriteHeight * 128;
+					//int texY = ((d * (txt[4].nbl)) / spriteHeight / 256);// voir index
+					int texY = ((d * (txt[4].nbl -1)) / spriteHeight) / 256;
+					//printf("tX=%i, tY=%i nbc=%i, nbl=%i, spriteH=%i, d=%i, y=%i, h=%i\n", texX, texY,txt[4].nbc,txt[4].nbl, spriteHeight,d,y,h);
+					int color = pick_color(txt[4], texY + 1, texX + 1);
 					if (color >= 0)
 						pixel_put(stripe, y, color, out, cub);
 				}

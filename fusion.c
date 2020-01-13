@@ -587,9 +587,9 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	while (i < j)
 	{
 		if (i < start)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->F);
-		else if (i > end)
 			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->C);
+		else if (i > end)
+			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->F);
 		else
 		{
 			// if (nbt == 4)

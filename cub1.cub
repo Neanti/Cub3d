@@ -5,7 +5,7 @@ WE ./west.xpm
 EA ./east.xpm
 
 S ./test.xpm
-F    8  ,  5 , 255
+F    255 ,  255 , 255
 C 225,30,0
 
 1 1 1 1 1 1 1 1 1 1
