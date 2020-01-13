@@ -1,4 +1,4 @@
-R 50 25
+R 150 100
 NO ./north.xpm
 SO ./south.xpm
 WE ./west.xpm

@@ -578,8 +578,8 @@ double degree2radian(double d)
 
 void	pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
 {
-	printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (cub->rw - stripe + cub->rh - y) * 4);
-	ft_put_int(color, &out, 54 + (cub->rw - stripe + cub->rh - y) * 4);
+	printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (((cub->rw - stripe) * cub->rh) + cub->rh - y) * 4);
+	ft_put_int(color, &out, 54 + (((cub->rh - y) * cub->rw) + cub->rw - stripe) * 4);
 }
 
 
@@ -877,7 +877,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 				{
 					int d = (y) * 256 - h * 128 + spriteHeight * 128;
 					int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)	+ 1;// voir index
-					////printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
+					printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
 					int color = pick_color(txt[4], texY, texX + 1);
 					if (color >= 0)
 						pixel_put(stripe, y, color, out, cub);
@@ -1288,7 +1288,7 @@ int main(int ac, char **argv)
 	printf("width = %i\n", w);
 	fct_test(data, -1, &game, &cub, txt, out);
 	int oo = open("save.bmp", O_WRONLY);
-	write(oo, out, 5054);
+	write(oo, out, 60054);
 	write(1, "\n", 1);
 	close(oo);
 	close(fd);

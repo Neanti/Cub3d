@@ -894,11 +894,13 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 
 		int spriteScreenX = (int)((w / 2) * (1 + transformX / transformY));
 
+		int vMoveScreen = (int)(0.0 / transformY);
+
 		int spriteHeight = abs((int)(h / transformY));
-		int drawStartY = -1 * spriteHeight / 2 + h / 2 - 5;
+		int drawStartY = -1 * spriteHeight / 2 + h / 2 + vMoveScreen;
 		if (drawStartY < 0)
 			drawStartY = 0;
-		int drawEndY = spriteHeight / 2 + h / 2;
+		int drawEndY = spriteHeight / 2 + h / 2 + vMoveScreen;
 		if (drawEndY >= h)
 			drawEndY = h;
 
@@ -909,20 +911,23 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt)
 		printf("DSX= %i\n", drawStartX);
 		int drawEndX = spriteWidth / 2 + spriteScreenX;
 		if (drawEndX >= w)
-			drawEndX = w;
+			drawEndX = w - 1;
 		//printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
 		for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
 		{
-			int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
+			//int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
+			int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256;
 
 			if (transformY > 0 && stripe >= 0 && stripe < w && transformY < ZBuffer[stripe])
 			{
 				for (int y = drawStartY; y < drawEndY; y++)
 				{
-					int d = (y) * 256 - h * 128 + spriteHeight * 128;
-					int texY = ((d * (txt[4].nbl - 1)) / spriteHeight / 256)	+ 1;// voir index
-					//printf("tX=%i, tY=%i nbc=%i, nbl=%i\n", texX, texY,txt[4].nbc,txt[4].nbl);
-					int color = pick_color(txt[4], texY, texX + 1);
+					//int d = (y) * 256 - h * 128 + spriteHeight * 128;
+					int d = (y-vMoveScreen) * 256 - h * 128 + spriteHeight * 128;
+					//int texY = ((d * (txt[4].nbl)) / spriteHeight / 256);// voir index
+					int texY = ((d * (txt[4].nbl -1)) / spriteHeight) / 256;
+					printf("tX=%i, tY=%i nbc=%i, nbl=%i, spriteH=%i, d=%i, y=%i, h=%i\n", texX, texY,txt[4].nbc,txt[4].nbl, spriteHeight,d,y,h);
+					int color = pick_color(txt[4], texY + 1, texX + 1);
 					if (color >= 0)
 						mlx_pixel_put(data.mlx_ptr, data.mlx_win, stripe, y, color);
 				}
