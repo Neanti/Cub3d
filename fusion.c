@@ -1173,13 +1173,322 @@ void locate_sprite(t_cub *cub)
 	cub->sy = y;
 }
 
+void ft_put_int(int n, char **s, int of)
+{
+	int tmp = n;
+	tmp = tmp>>24;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][3+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp>>16;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][2+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp>>8;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][1+of] = (char)tmp;
+	tmp = n;
+	tmp = tmp & 0b00000000000000000000000011111111;
+	//printf("char tmp = %c\n", (char)tmp);
+	s[0][0+of] = tmp;
+}
+
+void	save_pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
+{
+	//printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (((cub->rw - stripe) * cub->rh) + cub->rh - y) * 4);
+	ft_put_int(color, &out, 54 + (((cub->rh - y -1) * cub->rw) + stripe) * 4);
+}
+
+char *prepare_out(int w, int h)
+{
+	char *out;
+	int tailletot = (w * h * 4) + 54 / 4;
+	out = malloc(sizeof(char) * ((w * h * 4) + 54));
+	out[0] = 'B';
+	out[1] = 'M';
+	ft_put_int(tailletot, &out, 2);
+	//printf("out=%s\n\n",out);
+	int offset = 54;
+	ft_put_int(offset, &out, 10);
+	int tailletete = 40;
+	ft_put_int(tailletete, &out,14);
+	ft_put_int(w, &out, 18);
+	ft_put_int(h, &out, 22);
+	out[26] = (char)1;
+	out[27] = (char)0; // nbplan
+	int bpp = 32;
+	ft_put_int(bpp, &out, 28);
+	int compression = 0;
+	ft_put_int(compression, &out, 30); // overlap bpp !!!
+	int tailleimg = w * h;
+	ft_put_int(tailleimg, &out, 34);
+	int resH = 1000;
+	int resV = 1000;
+	ft_put_int(resH, &out, 38);
+	ft_put_int(resV, &out, 42);
+	ft_put_int(0, &out, 46);
+	ft_put_int(0, &out, 50);
+	//out[55] = '\0';
+	//write(1, out, 56);
+	return (out);
+}
+
+void save_ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out, t_cub *cub)
+{
+	//////printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
+	int i = 0;
+	int col;
+	int color;
+	col = round(wallX * (txt[nbt].nbc - 1)) + 1;
+	// if (nbt == 4)
+	//	 col = txt[4].nbc - 2;
+	//int color;
+	while (i < j)
+	{
+		if (i < start)
+			save_pixel_put(x, i, cub->C, out, cub);
+		else if (i > end)
+			save_pixel_put(x, i, cub->F, out, cub);
+		else
+		{
+			// if (nbt == 4)
+			// ////printf("i=%i, x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f nbl=%i, nbc=%i\npick c=%i, l=%i\n",i,x,start,end,j,nbt,wallX,txt[nbt].nbl,txt[nbt].nbc, col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
+			//////printf("coord= col=%i l=%d \n",col, (int)round(((i - start) / (double)(end - start)	* (txt[nbt].nbl - 1))) +1);
+			color = pick_color(txt[nbt], (int)round(((i - start) / (double)(end - start) * (txt[nbt].nbl - 1))) + 1, col);
+			// if (nbt == 4)
+			// ////printf("color=%i\n",color);
+			//color = pick_color(txt[nbt], col,round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1	);
+			//d = i * 256 - j * 128 + (end - start) * 128;
+			//texY = ((d * txt[nbt].nbl) / (end - start)) / 256;
+			//color = pick_color(txt[nbt], texY + 1, d + 1);
+			// if (color == -1)
+			//	 ////printf("BLO\n");
+			save_pixel_put(x, i, color, out, cub);
+		}
+		i++;
+	}
+}
+
+void save_fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *out)
+{
+	if (key == 53)
+	{
+		mlx_destroy_window(data.mlx_ptr, data.mlx_win);
+		return;
+	}
+	//////printf("MOVE\n");
+	int w = cub->rw;
+	int h = cub->rh;
+	double posX = game->posX;
+	double posY = game->posY;
+	double dirX = game->dirX;
+	double dirY = game->dirY;
+	double planeX = game->planeX;
+	double planeY = game->planeY;
+
+	double ZBuffer[cub->rw];
+
+	//while (1)
+	//{
+	//////printf(" FCT dirx = %f diry= %f et posx=%f et posY=%f\n", dirX, dirY, posX, posY);
+	//posX = 13;
+	for (int x = 0; x < w; x++) // w=width
+	{
+		double cameraX = 2 * x / (double)w - 1; // cast w en double a verif
+		double rayDirX = dirX + planeX * cameraX;
+		double rayDirY = dirY + planeY * cameraX;
+		int mapX = (int)posX; // cast (int)double a verif
+		int mapY = (int)posY; // represente coord rayon sur map(donc int)
+		//////printf("mX =%i, mY=%i\n",mapX,mapY);
+		double sideDistX;
+		double sideDistY;
+		//////printf("rdX=%f, rdY=%f, cmX=%f\n", rayDirX,rayDirY, cameraX);
+		double deltaDistX = fabs(1 / rayDirX);
+		double deltaDistY = fabs(1 / rayDirY); // Voir double/int
+		//////printf("%f %f delta\n",deltaDistX, deltaDistY);
+		double perpWallDist;
+
+		int stepX;
+		int stepY;
+
+		int hit = 0;
+		int side;
+		if (rayDirX < 0)
+		{
+			stepX = -1;
+			sideDistX = (posX - mapX) * deltaDistX;
+		}
+		else
+		{
+			stepX = 1;
+			sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+		}
+		if (rayDirY < 0)
+		{
+			stepY = -1;
+			sideDistY = (posY - mapY) * deltaDistY;
+		}
+		else
+		{
+			stepY = 1;
+			sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+		}
+		// int sprite = 0;
+		// int spriteX = 0;
+		// int allow = 0;
+		//////printf("EDGE\n");
+		int i = 0;
+		while (hit == 0)
+		{
+			if (sideDistX < sideDistY)
+			{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0;
+			}
+			else
+			{
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1;
+			}
+			//////printf("char map %i %i = %c\n", mapX,mapY,cub->map[mapX][mapY]);
+			if (cub->map[mapX][mapY] - 48 == 1)
+			{
+				//////printf("HIT x=%f y=%f et x=%i et w=%i et raydirX=%f et raydirY=%f\n", dirX, dirY,x,w, rayDirX,rayDirY);
+				hit = 1;
+			}
+			// if (cub->map[mapX][mapY] - 48 == 2 && sprite == 0)
+			// {
+			//	 sprite = 1;
+			// }
+			if (side == 0)
+				perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+			else
+				perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+
+			int lineHeight = (int)(h / perpWallDist);
+
+			int drawStart = -lineHeight / 2 + h / 2;
+			int drawEnd = lineHeight / 2 + h / 2;
+			int color;
+			double wallX; //where exactly the wall was hit
+			if (side == 0)
+				wallX = posY + perpWallDist * rayDirY;
+			else
+				wallX = posX + perpWallDist * rayDirX;
+			wallX -= floor((wallX));
+			//x coordinate on the texture
+			int texX = (int)(wallX * (double)txt[4].nbc);
+			if (side == 0 && rayDirX > 0)
+				texX = txt[0].nbc - texX - 1; // changer txt nb
+			if (side == 1 && rayDirY < 0)
+				texX = txt[0].nbc - texX - 1;
+			int nbt;
+			if (rayDirX > 0) // north ?
+			{
+				nbt = 0;
+			}
+			else
+			{
+				nbt = 1;
+			}
+			if (side == 1 && rayDirY > 0) // west ?
+			{
+				nbt = 2;
+			}
+			else if (side == 1) //east ?
+			{
+				nbt = 3;
+			}
+			if (hit == 1)
+			{
+				save_ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out, cub);
+				//////printf("draw WALL %i\n",i);
+				//allow = 1;
+			}
+			// if (sprite == 1 && allow == 1)
+			// {
+			//	 //////printf("linesprite %i\n",i);
+			//	 ft_sprite_line(txt[4], data, wallX, h, x,drawStart, drawEnd);
+			//	 sprite = -1;
+			//	 allow = 0;
+			// }
+			ZBuffer[x] = perpWallDist;
+		}
+		//FORMER
+	}
+	// CAST SPRITE
+
+	//sort sprite
+
+	sort_sprite(cub, posX, posY);
+
+	for (int i = 0; cub->sx[i] >= 0; i++)
+	{
+		//t
+		double sp = ((posX - cub->sx[i]) * (posX - cub->sx[i]) + (posY - cub->sy[i]) * (posY - cub->sy[i]));
+		printf("DIST DE %i = %f\n", i, sp);
+		//t
+		double spriteX = cub->sx[i] + 0.5 - posX;
+		double spriteY = cub->sy[i] + 0.5 - posY;
+		// printf("spX=%f, spY=%f\n",spriteX, spriteY);
+		double invDet = 1.0 / (planeX * dirY - dirX * planeY);
+		double transformX = invDet * (dirY * spriteX - dirX * spriteY);
+		double transformY = invDet * (-1 * planeY * spriteX + planeX * spriteY);
+
+		int spriteScreenX = (int)((w / 2) * (1 + transformX / transformY));
+
+		int vMoveScreen = (int)(0.0 / transformY);
+
+		int spriteHeight = abs((int)(h / transformY));
+		int drawStartY = -1 * spriteHeight / 2 + h / 2 + vMoveScreen;
+		if (drawStartY < 0)
+			drawStartY = 0;
+		int drawEndY = spriteHeight / 2 + h / 2 + vMoveScreen;
+		if (drawEndY >= h)
+			drawEndY = h;
+
+		int spriteWidth = abs((int)(h / transformY));
+		int drawStartX = -1 * spriteWidth / 2 + spriteScreenX ;
+		if (drawStartX < 0)
+			drawStartX = 0;
+		printf("DSX= %i\n", drawStartX);
+		int drawEndX = spriteWidth / 2 + spriteScreenX;
+		if (drawEndX >= w)
+			drawEndX = w - 1;
+		//printf ("sX=%i, eX=%i, sY=%i, eY=%i\n", drawStartX, drawEndX, drawStartY, drawEndY);
+		for (int stripe = drawStartX; stripe < drawEndX + 1; stripe++)
+		{
+			//int texX = (int)((256 * (stripe - (-1 * spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256);
+			int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * (txt[4].nbc) / spriteWidth) / 256;
+
+			if (transformY > 0 && stripe >= 0 && stripe < w && transformY < ZBuffer[stripe])
+			{
+				for (int y = drawStartY; y < drawEndY; y++)
+				{
+					//int d = (y) * 256 - h * 128 + spriteHeight * 128;
+					int d = (y-vMoveScreen) * 256 - h * 128 + spriteHeight * 128;
+					//int texY = ((d * (txt[4].nbl)) / spriteHeight / 256);// voir index
+					int texY = ((d * (txt[4].nbl -1)) / spriteHeight) / 256;
+					//printf("tX=%i, tY=%i nbc=%i, nbl=%i, spriteH=%i, d=%i, y=%i, h=%i\n", texX, texY,txt[4].nbc,txt[4].nbl, spriteHeight,d,y,h);
+					int color = pick_color(txt[4], texY + 1, texX + 1);
+					if (color >= 0)
+						save_pixel_put(stripe, y, color, out, cub);
+				}
+			}
+		}
+	}
+	////printf("CALL LOOP\n");
+	//mlx_loop(data.mlx_ptr);
+	//}
+}
+
 int main(int ac, char **argv)
 {
-	if (ac == 3)
-	{
-		printf("save img\n");
-	}
-	else if (ac == 1)
+	if (ac == 1)
 	{
 		printf("Error\n Pas de fichier en argument\n");
 		return (0);
@@ -1259,18 +1568,27 @@ int main(int ac, char **argv)
 	locate_sprite(&cub);
 	//printf("x1=%i,y1=%i,x2=%i,y2=%i\n",cub.sx[0],cub.sy[0],cub.sx[1],cub.sy[1]);
 	//fin parsing debut jeu
-	// SaVE
-
-	// FIN SAVE
-	
 	data_t data;
+	if ((data.mlx_ptr = mlx_init()) == NULL)
+		return (EXIT_FAILURE);
 	int w = cub.rw;
 	int h = cub.rh;
+	t_img *txt = ft_prepare_txt(cub, data);
+	if (ac == 3)
+	{
+		printf("save img\n");
+		char *out;
+		out = prepare_out(w,h);
+		save_fct_test(data, -1, &game, &cub, txt, out);
+		int oo = open("save.bmp", O_WRONLY);
+		write(oo, out, w * h * 4 + 54);
+		close(oo);
+		exit(0);
+	}
 	if ((data.mlx_ptr = mlx_init()) == NULL)
 		return (EXIT_FAILURE);
 	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
 		return (EXIT_FAILURE);
-	t_img *txt = ft_prepare_txt(cub, data);
 	//game.w = w;
 	//game.h = h;
 	t_wrap wrap;

@@ -576,14 +576,14 @@ double degree2radian(double d)
 	return (r);
 }
 
-void	pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
+void	save_pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
 {
 	printf("stripe=%i, y=%i, cub->rw=%i, cub-rh=%i res=%i\n", stripe, y, cub->rw, cub->rh,54 + (((cub->rw - stripe) * cub->rh) + cub->rh - y) * 4);
 	ft_put_int(color, &out, 54 + (((cub->rh - y -1) * cub->rw) + cub->rw - stripe - 1) * 4);
 }
 
 
-void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out, t_cub *cub)
+void save_ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, char *out, t_cub *cub)
 {
 	//////printf("x=%i,	st=%i, end=%i, j=%i, nbt=%i, wallX=%f \n",x,start,end,j,nbt,wallX);
 	int i = 0;
@@ -596,9 +596,9 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 	while (i < j)
 	{
 		if (i < start)
-			pixel_put(x, i, cub->F, out, cub);
+			save_pixel_put(x, i, cub->F, out, cub);
 		else if (i > end)
-			pixel_put(x, i, cub->C, out, cub);
+			save_pixel_put(x, i, cub->C, out, cub);
 		else
 		{
 			// if (nbt == 4)
@@ -613,7 +613,7 @@ void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int 
 			//color = pick_color(txt[nbt], texY + 1, d + 1);
 			// if (color == -1)
 			//	 ////printf("BLO\n");
-			pixel_put(x, i, color, out, cub);
+			save_pixel_put(x, i, color, out, cub);
 		}
 		i++;
 	}
@@ -680,7 +680,7 @@ void	sort_sprite(t_cub *cub, double posX, double posY)
 }
 
 
-void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *out)
+void save_fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *out)
 {
 	if (key == 53)
 	{
@@ -814,7 +814,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 			}
 			if (hit == 1)
 			{
-				ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out, cub);
+				save_ft_put_line(x, drawStart, drawEnd, txt, data, h, nbt, wallX,out, cub);
 				//////printf("draw WALL %i\n",i);
 				//allow = 1;
 			}
@@ -885,7 +885,7 @@ void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt, char *
 					//printf("tX=%i, tY=%i nbc=%i, nbl=%i, spriteH=%i, d=%i, y=%i, h=%i\n", texX, texY,txt[4].nbc,txt[4].nbl, spriteHeight,d,y,h);
 					int color = pick_color(txt[4], texY + 1, texX + 1);
 					if (color >= 0)
-						pixel_put(stripe, y, color, out, cub);
+						save_pixel_put(stripe, y, color, out, cub);
 				}
 			}
 		}
@@ -1291,7 +1291,7 @@ int main(int ac, char **argv)
 	char *out;
 	out = prepare_out(w,h);
 	printf("width = %i\n", w);
-	fct_test(data, -1, &game, &cub, txt, out);
+	save_fct_test(data, -1, &game, &cub, txt, out);
 	int oo = open("save.bmp", O_WRONLY);
 	write(oo, out, 60054);
 	write(1, "\n", 1);
