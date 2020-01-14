@@ -1,22 +1,73 @@
-#include "Libft/libft.h"
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <mlx.h>
-#include "minilibx/mlx.h"
-#include <sys/types.h>
-#include <math.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   calc.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: augay <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/01/14 10:45:43 by augay             #+#    #+#             */
+/*   Updated: 2020/01/14 10:45:51 by augay            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main()
+#include "cub.h"
+
+void	bulle(t_cub *cub, int i)
 {
-	int col = round (0.9 * 100 * (4 - 1) / 100) + 1;
-	printf("col=%d\n",col);
-	int t = round((298 * 100 / (double)(299 - 0) / 100 * (4 - 1))) + 1;
-	int t2 = round((299 * 100 / (299 - 0) / 100 * (4 - 1))) + 1;
-	//round((i * 100 / (end - start) / 100 * (txt[nbt].nbl - 1))) +1 
-	printf("LI=%d LI2=%i\n",t,t2);
+	int t1;
 
+	t1 = cub->sx[i];
+	cub->sx[i] = cub->sx[i + 1];
+	cub->sx[i + 1] = t1;
+	t1 = cub->sy[i];
+	cub->sy[i] = cub->sy[i + 1];
+	cub->sy[i + 1] = t1;
+}
+
+void	sort_sprite(t_cub *cub, double pos_x, double pos_y)
+{
+	int		i;
+	int		b;
+	double	n1;
+	double	n2;
+	int		t1;
+
+	b = 1;
+	i = 0;
+	while (b == 1)
+	{
+		b = 0;
+		while (cub->sx[i + 1] >= 0)
+		{
+			n1 = dist(pos_x, pos_y, cub->sx[i], cub->sy[i]);
+			n2 = dist(pos_x, pos_y, cub->sx[i + 1], cub->sy[i + 1]);
+			if (n2 > n1)
+			{
+				b = 1;
+				bulle(cub, i);
+			}
+			i++;
+		}
+	}
+}
+
+double	dist(double pos_x, double pos_y, int sx, int sy)
+{
+	return (((pos_x - sx) * (pos_x - sx) + (pos_y - sy) * (pos_y - sy)));
+}
+
+double	ft_calc_vec(double x, double y, double r_x, double r_y)
+{
+	double l1;
+	double l2;
+	double p;
+	double co;
+
+	l1 = sqrt(pow(x, 2) + pow(y, 2));
+	l2 = sqrt(pow(r_x, 2) + pow(r_y, 2));
+	p = x * r_x + y * r_y;
+	co = (double)p / (l1 * l2);
+	co = acos(co);
+	co = co * (180 / M_PI);
+	return (co);
 }
