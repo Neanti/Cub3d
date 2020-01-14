@@ -53,6 +53,10 @@ int		arrange(char **s)
 			return (-1);
 		color = get_color(ft_atoi(sp[0]), ft_atoi(sp[1]), ft_atoi(sp[2]));
 	}
+	int j = 0;
+	while(sp[j])
+		free(sp[j++]);
+	free(sp);
 	return (color);
 }
 
@@ -116,4 +120,8 @@ void	fill_cub(char **s, t_cub *cub)
 	{
 		check_cub(cub, s, id);
 	}
+	i = 0;
+	while(s[i])
+		free(s[i++]);
+	//free(s);
 }

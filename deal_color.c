@@ -92,6 +92,7 @@ int	pick_color(t_img img, int x, int y)
 	color = bin2col(res, img.endian);
 	if (res[img.bpp - 1] == '1')
 		color = -1;
+	free(res);
 	return (color);
 }
 

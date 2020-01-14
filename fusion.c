@@ -10,29 +10,6 @@
 #include <sys/types.h>
 #include <math.h>
 #include "cub.h"
-// size_t strlcpy(char *dst, const char *src, size_t dsize)
-// {
-//	 const char *osrc = src;
-//	 size_t nleft = dsize;
-
-//	 /* Copy as many bytes as will fit. */
-//	 if (nleft != 0) {
-//		 while (--nleft != 0) {
-//			 if ((*dst++ = *src++) == '\0')
-//				 break;
-//		 }
-//	 }
-
-//	 /* Not enough room in dst, add NUL and traverse rest of src. */
-//	 if (nleft == 0) {
-//		 if (dsize != 0)
-//			 *dst = '\0';		/* NUL-terminate dst */
-//		 while (*src++)
-//			 ;
-//	 }
-
-//	 return(src - osrc - 1);	/* count does not include NUL */
-// }
 
 void print_cub(t_cub c)
 {
@@ -50,13 +27,6 @@ void print_map(char **map)
 	}
 	printf("---FIN MAP---\n");
 }
-
-
-
-
-
-
-
 
 int main(int ac, char **argv)
 {
@@ -89,11 +59,11 @@ int main(int ac, char **argv)
 	printf("fd=%i\n", fd);
 	while ((k = get_next_line(fd, &line)) != 0)
 	{
-		if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
-		{
-			printf("Error\nMap coupé ou manque de mur\n");
-			return (0);
-		}
+		// if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
+		// {
+		// 	printf("Error\nMap coupé ou manque de mur\n");
+		// 	return (0);
+		// }
 		if (stat == 0)
 		{
 			//printf("TOFILL line=%s\n", line);
@@ -110,6 +80,7 @@ int main(int ac, char **argv)
 		}
 		free(line);
 	}
+	free(line);
 	//printf("line=%s\n", line);
 	if (try_path(&cub) == -1)
 	{
@@ -131,14 +102,12 @@ int main(int ac, char **argv)
 
 	char **g_map;
 	g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-	//printf("M01 %i %i\n", g_map[0][0], g_map[0][1]);
 	print_cub(cub);
 	cub.map = g_map;
 	t_info game = prepare_info();
 	locate_player(&game, &cub);
 	print_map(g_map);
 	locate_sprite(&cub);
-	//printf("x1=%i,y1=%i,x2=%i,y2=%i\n",cub.sx[0],cub.sy[0],cub.sx[1],cub.sy[1]);
 	//fin parsing debut jeu
 	data_t data;
 	if ((data.mlx_ptr = mlx_init()) == NULL)
@@ -155,21 +124,32 @@ int main(int ac, char **argv)
 		int oo = open("save.bmp", O_WRONLY);
 		write(oo, out, w * h * 4 + 54);
 		close(oo);
+		free(cub.sx);
+		free(cub.sy);
+		free(cub.NO);
+		free(cub.S);
+		free(cub.SO);
+		free(cub.WE);
+		free(cub.EA);
+		w = 0;
+		while(cub.map[w])
+		{
+			printf("JEFREEEEEE\n");
+			free(cub.map[w++]);
+		}
+		free(cub.map);
+		free(data.mlx_ptr);
+		system("leaks a.out");
 		exit(0);
 	}
-	if ((data.mlx_ptr = mlx_init()) == NULL)
-		return (EXIT_FAILURE);
 	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
 		return (EXIT_FAILURE);
-	//game.w = w;
-	//game.h = h;
 	t_wrap wrap;
 	wrap.data = &data;
 	wrap.game = &game;
 	wrap.cub = &cub;
 	wrap.img = txt;
 	mlx_key_hook(data.mlx_win, done, &wrap);
-	//mlx_hook()
 	fct_test(data, -1, &game, &cub, txt);
 	close(fd);
 	free(txt);

@@ -73,5 +73,6 @@ char	**ft_prepare_map(char *m, int *x, int *y)
 	j = 0;
 	out = ft_split(m, '\n');
 	out = remove_space(out, x, y);
+	free(m);
 	return (out);
 }

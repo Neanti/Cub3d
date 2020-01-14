@@ -52,7 +52,8 @@ char	*append_n(char *s)
 	int		i;
 
 	i = 0;
-	out = malloc(sizeof(char) * (ft_strlen(s) + 2));
+	if ((out = malloc(sizeof(char) * (ft_strlen(s) + 2))) == NULL)
+		return (NULL);
 	while (s[i])
 	{
 		out[i] = s[i];

@@ -29,11 +29,13 @@ char	**prep_out_space(int i, int m)
 {
 	char **out;
 
-	out = malloc(sizeof(char *) * (i + 1));
+	if ((out = malloc(sizeof(char *) * (i + 1))) == NULL)
+		return (NULL);
 	out[i] = 0;
 	while (i > 0)
 	{
-		out[i - 1] = malloc(sizeof(char) * (m + 1));
+		if ((out[i - 1] = malloc(sizeof(char) * (m + 1))) == NULL)
+			return (NULL);
 		ft_bzero(out[i - 1], m);
 		i--;
 	}
