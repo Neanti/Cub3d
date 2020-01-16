@@ -141,7 +141,7 @@ int main(int ac, char **argv)
 	wrap.cub = &cub;
 	wrap.img = txt;
 	mlx_key_hook(data.mlx_win, done, &wrap);
-	fct_test(-1, &wrap);
+	fct_test(&wrap);
 	close(fd);
 	free(txt);
 	free(g_map);

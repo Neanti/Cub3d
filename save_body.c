@@ -63,7 +63,6 @@ void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out)
 			step_y = 1;
 			side_dist_y = (map_y + 1.0 - pos_y) * delta_dist_y;
 		}
-		int i = 0;
 		while (hit == 0)
 		{
 			if (side_dist_x < side_dist_y)
@@ -91,7 +90,6 @@ void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out)
 
 			int draw_start = -line_height / 2 + h / 2;
 			int draw_end = line_height / 2 + h / 2;
-			int color;
 			double wall_x;
 			if (side == 0)
 				wall_x = pos_y + perp_wall_dist * ray_dir_y;
@@ -120,7 +118,6 @@ void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out)
 	sort_sprite(cub, pos_x, pos_y);
 	for (int i = 0; cub->sx[i] >= 0; i++)
 	{
-		double sp = ((pos_x - cub->sx[i]) * (pos_x - cub->sx[i]) + (pos_y - cub->sy[i]) * (pos_y - cub->sy[i]));
 		double sprite_x = cub->sx[i] + 0.5 - pos_x;
 		double sprite_y = cub->sy[i] + 0.5 - pos_y;
 		double inv_det = 1.0 / (plane_x * dir_y - dir_x * plane_y);

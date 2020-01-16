@@ -30,7 +30,6 @@ void	sort_sprite(t_cub *cub, double pos_x, double pos_y)
 	int		b;
 	double	n1;
 	double	n2;
-	int		t1;
 
 	b = 1;
 	i = 0;

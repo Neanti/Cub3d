@@ -71,7 +71,7 @@ int		done(int key, void *a)
 	}
 	else
 		deal_key(key, game, cub);
-	fct_test(key, wrap);
+	fct_test(wrap);
 	return (1);
 }
 

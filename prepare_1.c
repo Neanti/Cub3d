@@ -101,7 +101,6 @@ void	check_cub(t_cub *cub, char **s, int id)
 
 void	fill_cub(char **s, t_cub *cub)
 {
-	int i;
 	int id;
 
 	if (s[0] != 0)

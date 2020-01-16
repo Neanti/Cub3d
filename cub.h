@@ -108,7 +108,7 @@ t_info prepare_info(void);
 char **remove_space(char **s, int *x, int *y);
 void locate_player(t_info *game, t_cub *cub);
 void locate_sprite(t_cub *cub);
-void fct_test(int key, t_wrap *wrap);
+void fct_test(t_wrap *wrap);
 void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out);
 void	save_pixel_put(int stripe, int y, int color, char *out, t_cub *cub);
 char *prepare_out(int w, int h);
