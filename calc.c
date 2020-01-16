@@ -34,6 +34,8 @@ void	sort_sprite(t_cub *cub, double pos_x, double pos_y)
 
 	b = 1;
 	i = 0;
+	if (cub->sx[0] == -1 || cub->sx[1] == -1)
+		return ;
 	while (b == 1)
 	{
 		b = 0;

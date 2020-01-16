@@ -57,6 +57,7 @@ int main(int ac, char **argv)
 	map = malloc(sizeof(char));
 	map[0] = '\0';
 	printf("fd=%i\n", fd);
+	char **rspl;
 	while ((k = get_next_line(fd, &line)) != 0)
 	{
 		// if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
@@ -67,7 +68,8 @@ int main(int ac, char **argv)
 		if (stat == 0)
 		{
 			//printf("TOFILL line=%s\n", line);
-			fill_cub(ft_split(line, ' '), &cub);
+			rspl = ft_split(line, ' ');
+			fill_cub(rspl, &cub);
 		}
 		//printf("line=%s\n", line);
 		if (line[0] == '1')
@@ -82,6 +84,7 @@ int main(int ac, char **argv)
 	}
 	free(line);
 	//printf("line=%s\n", line);
+	
 	if (try_path(&cub) == -1)
 	{
 		printf("Error\nChemins non valides");
@@ -99,9 +102,11 @@ int main(int ac, char **argv)
 		printf("Error\nManque de mur\n");
 		return (0);
 	}
-
+	printf("soon fin parse\n");
 	char **g_map;
 	g_map = ft_prepare_map(map, &cub.mx, &cub.my);
+	
+
 	print_cub(cub);
 	cub.map = g_map;
 	t_info game = prepare_info();
@@ -109,7 +114,8 @@ int main(int ac, char **argv)
 	print_map(g_map);
 	locate_sprite(&cub);
 	//fin parsing debut jeu
-	data_t data;
+	t_data data;
+
 	if ((data.mlx_ptr = mlx_init()) == NULL)
 		return (EXIT_FAILURE);
 	int w = cub.rw;
@@ -124,21 +130,6 @@ int main(int ac, char **argv)
 		int oo = open("save.bmp", O_WRONLY);
 		write(oo, out, w * h * 4 + 54);
 		close(oo);
-		free(cub.sx);
-		free(cub.sy);
-		free(cub.NO);
-		free(cub.S);
-		free(cub.SO);
-		free(cub.WE);
-		free(cub.EA);
-		w = 0;
-		while(cub.map[w])
-		{
-			printf("JEFREEEEEE\n");
-			free(cub.map[w++]);
-		}
-		free(cub.map);
-		free(data.mlx_ptr);
 		system("leaks a.out");
 		exit(0);
 	}
@@ -150,7 +141,7 @@ int main(int ac, char **argv)
 	wrap.cub = &cub;
 	wrap.img = txt;
 	mlx_key_hook(data.mlx_win, done, &wrap);
-	fct_test(data, -1, &game, &cub, txt);
+	fct_test(-1, &wrap);
 	close(fd);
 	free(txt);
 	free(g_map);

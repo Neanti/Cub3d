@@ -53,10 +53,8 @@ int		arrange(char **s)
 			return (-1);
 		color = get_color(ft_atoi(sp[0]), ft_atoi(sp[1]), ft_atoi(sp[2]));
 	}
-	int j = 0;
-	while(sp[j])
-		free(sp[j++]);
-	free(sp);
+	free(s2);
+	ft_split_free(sp);
 	return (color);
 }
 
@@ -84,6 +82,7 @@ int		check_id(char *s)
 
 void	check_cub(t_cub *cub, char **s, int id)
 {
+	printf("ID CUB = %i\n", id);
 	if (id == 2)
 		cub->NO = ft_strdup(s[1]);
 	else if (id == 3)
@@ -108,20 +107,21 @@ void	fill_cub(char **s, t_cub *cub)
 	if (s[0] != 0)
 		id = check_id(s[0]);
 	else
+	{
+		ft_split_free(s);
 		return ;
+	}
 	if (s[1] == 0)
+	{
+		ft_split_free(s);
 		return ;
+	}
 	if (id == 1)
 	{
 		cub->rw = ft_atoi(s[1]);
 		cub->rh = ft_atoi(s[2]);
 	}
 	else
-	{
 		check_cub(cub, s, id);
-	}
-	i = 0;
-	while(s[i])
-		free(s[i++]);
-	//free(s);
+	ft_split_free(s);
 }

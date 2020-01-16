@@ -14,12 +14,15 @@
 
 void	ft_split_free(char **s)
 {
-	while (s[0] != 0)
+	int i;
+
+	i = 0;
+	while (s[i])
 	{
-		free(s[0]);
-		s = s + 1;
+		free(s[i]);
+		i++;
 	}
-	free(s[0]);
+	free(s);
 }
 
 char	*fusion(char **s)
@@ -28,39 +31,47 @@ char	*fusion(char **s)
 	char	*s1;
 	char	*s2;
 
-	i = 1;
-	s1 = s[0];
+	i = 0;
+	s1 = NULL;
 	while (s[i])
 	{
 		s2 = s1;
 		s1 = ft_strjoin(s1, s[i]);
-		free(s2);
+		if (s2 != NULL)
+			free(s2);
 		i++;
 	}
+	printf("RET FUSI= %s\n", s1);
 	return (s1);
 }
 
-void	ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wall_x, t_cub *cub)
+void	ft_put_line(t_draw *draw, int nbt, double wall_x, t_wrap *wrap)
 {
 	int i;
 	int col;
 	int color;
 
 	i = 0;
-	col = round(wall_x * (txt[nbt].nbc - 1)) + 1;
-	while (i < j)
+	col = round(wall_x * (wrap->img[nbt].nbc - 1)) + 1;
+	while (i < draw->j)
 	{
-		if (i < start)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->C);
-		else if (i > end)
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, cub->F);
+		if (i < draw->start)
+			mlx_pixel_put(wrap->data->mlx_ptr, wrap->data->mlx_win,
+			draw->x, i, wrap->cub->C);
+		else if (i > draw->end)
+			mlx_pixel_put(wrap->data->mlx_ptr, wrap->data->mlx_win,
+			draw->x, i, wrap->cub->F);
 		else
 		{
-			color = pick_color(txt[nbt], (int)round(((i - start) / (double)(end - start) * (txt[nbt].nbl - 1))) + 1, col);
-			mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, i, color);
+			color = pick_color(wrap->img[nbt], (int)round(((i - draw->start) /
+			(double)(draw->end - draw->start) *
+			(wrap->img[nbt].nbl - 1))) + 1, col);
+			mlx_pixel_put(wrap->data->mlx_ptr, wrap->data->mlx_win,
+			draw->x, i, color);
 		}
 		i++;
 	}
+	free(draw);
 }
 
 char	**ft_prepare_map(char *m, int *x, int *y)

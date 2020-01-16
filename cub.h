@@ -53,11 +53,11 @@ typedef struct	s_img
 	int		endian;
 }				t_img;
 
-typedef struct	data_s
+typedef struct	s_data
 {
 	void *mlx_ptr;
 	void *mlx_win;
-}				data_t;
+}				t_data;
 
 typedef struct	s_info
 {
@@ -74,11 +74,19 @@ typedef struct	s_info
 
 typedef struct	s_wrap
 {
-	data_t	*data;
+	t_data	*data;
 	t_info	*game;
 	t_cub	*cub;
 	t_img	*img;
 }				t_wrap;
+
+typedef struct	s_draw
+{
+	int	j;
+	int start;
+	int end;
+	int x;
+}				t_draw;
 
 int get_color(int r, int g, int b);
 int deal_pack(char *s);
@@ -100,13 +108,13 @@ t_info prepare_info(void);
 char **remove_space(char **s, int *x, int *y);
 void locate_player(t_info *game, t_cub *cub);
 void locate_sprite(t_cub *cub);
-void fct_test(data_t data, int key, t_info *game, t_cub *cub, t_img *txt);
+void fct_test(int key, t_wrap *wrap);
 void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out);
 void	save_pixel_put(int stripe, int y, int color, char *out, t_cub *cub);
 char *prepare_out(int w, int h);
 void save_ft_put_line(int x, int start, int end, t_img *txt, int j, int nbt, double wallX, char *out, t_cub *cub);
 void ft_put_int(int n, char **s, int of);
-t_img *ft_prepare_txt(t_cub cub, data_t data);
+t_img *ft_prepare_txt(t_cub cub, t_data data);
 void	sort_sprite(t_cub *cub, double posX, double posY);
 double dist(double posX, double posY, int sx, int sy);
 double ft_calc_vec(double x, double y, double rX, double rY);
@@ -114,9 +122,10 @@ void rot_vec(double a, t_info *game);
 double d2r(double d);
 void ft_split_free(char **s);
 char *fusion(char **s);
-void ft_put_line(int x, int start, int end, t_img *txt, data_t data, int j, int nbt, double wallX, t_cub *cub);
+void ft_put_line(t_draw *draw, int nbt, double wallX, t_wrap *wrap);
 char **ft_prepare_map(char *m, int *x, int *y);
 int done(int key, void *a);
 int count_sprite(char **s);
+t_draw	*ft_pack(int a, int b, int c, int d);
 
 #endif

@@ -39,7 +39,7 @@ char	**prep_out_space(int i, int m)
 		ft_bzero(out[i - 1], m);
 		i--;
 	}
-	return(out);
+	return (out);
 }
 
 int		count_space(char **s, int *i)
@@ -68,20 +68,19 @@ char	**remove_space(char **s, int *x, int *y)
 	char	**out;
 	int		i;
 	int		j;
-	int		n;
 
-	n = count_space(s, &i);
-	out = prep_out_space(i, n);
+	*x = count_space(s, &i);
+	out = prep_out_space(i, *x);
 	i = 0;
 	while (s[i] && !(j = 0))
 	{
-		n = 0;
+		*x = 0;
 		while (s[i][j])
 		{
 			if (s[i][j] != ' ')
 			{
-				out[i][n] = s[i][j];
-				n++;
+				out[i][*x] = s[i][j];
+				(*x)++;
 			}
 			j++;
 		}
@@ -89,6 +88,7 @@ char	**remove_space(char **s, int *x, int *y)
 	}
 	*x = i;
 	*y = (j + 1) / 2;
+	ft_split_free(s);
 	return (out);
 }
 

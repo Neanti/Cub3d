@@ -89,7 +89,7 @@ void	ft_put_int(int n, char **s, int of)
 	s[0][0 + of] = tmp;
 }
 
-t_img	*ft_prepare_txt(t_cub cub, data_t data)
+t_img	*ft_prepare_txt(t_cub cub, t_data data)
 {
 	t_img	*out;
 

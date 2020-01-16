@@ -52,7 +52,7 @@ int		done(int key, void *a)
 {
 	t_wrap	*wrap;
 	t_info	*game;
-	data_t	*data;
+	t_data	*data;
 	t_cub	*cub;
 	t_img	*txt;
 
@@ -64,12 +64,14 @@ int		done(int key, void *a)
 	if (key == 53 || key == 65307)
 	{
 		mlx_destroy_window(data->mlx_ptr, data->mlx_win);
+		printf("LEGIt EXIT\n");
+		system("leaks a.out");
 		exit(0);
 		return (0);
 	}
 	else
 		deal_key(key, game, cub);
-	fct_test(*data, key, game, cub, txt);
+	fct_test(key, wrap);
 	return (1);
 }
 
