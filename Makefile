@@ -10,35 +10,38 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftcub3d.a
-OPTION = -c
-FLAG = -Wall -Wextra -Werror
-OBJLIB_PATH = libft/
-SRC = body.c calc_2.c locate.c parsing.c prepare_4.c \
-body_1.c deal_color.c prepare_1.c save_body.c \
-body_2.c error_1.c others.c prepare_2.c save_utils.c \
-calc.c error_2.c others_2.c prepare_3.c
-OBJ = $(SRC:.c=.o)
-OBJLIB = ft_isdigit.o ft_memmove.o ft_strchr.o ft_strncmp.o ft_atoi.o ft_isprint.o ft_memset.o \
-ft_strdup.o ft_strnstr.o ft_bzero.o ft_itoa.o ft_putchar_fd.o ft_strjoin.o ft_strrchr.o ft_calloc.o \
-ft_memccpy.o ft_putendl_fd.o ft_strlcat.o ft_strtrim.o ft_isalnum.o ft_memchr.o ft_putnbr_fd.o ft_strlcpy.o \
-ft_substr.o ft_isalpha.o ft_memcmp.o ft_putstr_fd.o ft_strlen.o ft_tolower.o ft_isascii.o ft_memcpy.o \
-ft_split.o ft_strmapi.o ft_toupper.o get_next_line.o get_next_line_utils.o
-OBJLIBP = $(addprefix $(OBJLIB_PATH),$(OBJLIB))
+NAME = cub3d
+TMP_PATH = ./tmp/
+SRC_PATH = ./srcs/
+LIBFT_PATH = ./libft/libft.a
+MLX_PATH = /usr/local/lib/libmlx.a
+SRCS = body.c       calc_2.c     locate.c     parsing.c    prepare_4.c \
+body_1.c     deal_color.c main.c       prepare_1.c  save_body.c \
+body_2.c     error_1.c    others.c     prepare_2.c  save_utils.c \
+calc.c       error_2.c    others_2.c   prepare_3.c
+
+FLAGS = -Wall -Werror -Wextra -framework OpenGL -framework Appkit
+FLAG_C = -Wall -Wextra -Werror
+OBJ = $(SRCS:.c=.o)
+OBJF = $(addprefix $(TMP_PATH),$(OBJ))
+CC = gcc
 
 all: $(NAME)
 
-$(NAME): mlibft $(OBJ)
-	@ar rc $(NAME) $(OBJ) $(OBJLIBP)
+$(NAME): $(OBJF)
+	@cd ./libft && make
+	gcc $(FLAGS) -I $(SRC_PATH) $(OBJF) $(LIBFT_PATH) $(MLX_PATH) -o $(NAME)
+
+$(TMP_PATH)%.o: $(SRC_PATH)%.c ./srcs/cub.h
+	@mkdir -p $(TMP_PATH)
+	@gcc $(FLAG_C) -I./srcs/ -c $< -o $@
+
 clean:
-	@rm -f $(OBJ)
-	@cd libft && make clean
+	@rm -rf save.bmp
+	@rm -rf $(TMP_PATH)
+	@cd ./libft && make fclean
+
 fclean: clean
 	@rm -f $(NAME)
-mlibft :
-	cd libft && make
-$(OBJ) :
-	gcc $(FLAG) $(OPTION) $(SRC)
-re: fclean all
 
-.PHONY: all clean fclean re $(NAME)
+re: fclean all

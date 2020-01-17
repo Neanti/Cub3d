@@ -1,10 +1,10 @@
 R 500 450
-NO ./north.xpm
-SO ./south.xpm
-WE ./west.xpm
-EA ./east.xpm
+NO ./ressources/north.xpm
+SO ./ressources/south.xpm
+WE ./ressources/west.xpm
+EA ./ressources/east.xpm
 
-S ./test.xpm
+S ./ressources/sprite.xpm
 F    255 ,  255 , 255
 C 225,30,0
 
