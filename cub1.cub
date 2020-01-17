@@ -1,4 +1,4 @@
-R 500 450
+R 400 200
 NO ./ressources/north.xpm
 SO ./ressources/south.xpm
 WE ./ressources/west.xpm

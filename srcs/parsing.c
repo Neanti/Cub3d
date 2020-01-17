@@ -57,7 +57,8 @@ t_wrap	*init_wrap(t_data *data, t_info *game, t_cub *cub, t_img *txt)
 {
 	t_wrap *wrap;
 
-	wrap = malloc(sizeof(t_wrap));
+	if ((wrap = malloc(sizeof(t_wrap))) == NULL)
+		exit(er_mem());
 	wrap->data = data;
 	wrap->game = game;
 	wrap->cub = cub;

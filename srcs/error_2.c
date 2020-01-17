@@ -29,3 +29,9 @@ int	er_save(void)
 	ft_putstr_fd("Error\nLe second argument n'est pas reconnu.\n", 2);
 	return (1);
 }
+
+int	er_mem(void)
+{
+	ft_putstr_fd("Error\nUne allocation mémoire à échoué.\n", 2);
+	return (1);
+}

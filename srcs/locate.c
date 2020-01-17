@@ -79,4 +79,8 @@ void	locate_player(t_info *game, t_cub *cub)
 		}
 		i++;
 	}
+	if (cub->rh > 1440)
+		cub->rh = 1440;
+	if (cub->rw > 2560)
+		cub->rw = 2560;
 }

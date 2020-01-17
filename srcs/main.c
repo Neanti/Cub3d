@@ -64,7 +64,7 @@ void	gnl_use(char *s, t_cub *cub)
 	stat = 0;
 	k = 1;
 	if ((map = malloc(sizeof(char))) == NULL)
-		exit(0);
+		exit(er_mem());
 	map[0] = '\0';
 	while ((k == 1) && (k = get_next_line(fd, &line)) >= 0)
 	{

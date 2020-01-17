@@ -27,7 +27,8 @@ char	*prepare_out(int w, int h)
 
 	tailletot = (w * h * 4) + 54 / 4;
 	tailleimg = w * h;
-	out = malloc(sizeof(char) * ((w * h * 4) + 54));
+	if ((out = malloc(sizeof(char) * ((w * h * 4) + 54))) == NULL)
+		exit(er_mem());
 	out[0] = 'B';
 	out[1] = 'M';
 	ft_put_int(tailletot, &out, 2);
@@ -99,7 +100,8 @@ t_img	*ft_prepare_txt(t_cub cub, t_data data)
 {
 	t_img	*out;
 
-	out = malloc(sizeof(t_img) * 5);
+	if ((out = malloc(sizeof(t_img) * 5)) == NULL)
+		exit(er_mem());
 	out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.no,
 	&(out[0].nbc), &(out[0].nbl));
 	out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp),

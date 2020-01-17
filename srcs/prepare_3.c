@@ -30,12 +30,12 @@ char	**prep_out_space(int i, int m)
 	char **out;
 
 	if ((out = malloc(sizeof(char *) * (i + 1))) == NULL)
-		return (NULL);
+		exit(er_mem());
 	out[i] = 0;
 	while (i > 0)
 	{
 		if ((out[i - 1] = malloc(sizeof(char) * (m + 1))) == NULL)
-			return (NULL);
+			exit(er_mem());
 		ft_bzero(out[i - 1], m);
 		i--;
 	}
@@ -94,29 +94,27 @@ char	**remove_space(char **s, int *x, int *y)
 
 void	locate_sprite(t_cub *cub)
 {
-	int *x;
-	int *y;
 	int i;
 	int j;
 	int k;
 
-	x = malloc(sizeof(int) * (count_sprite(cub->map) + 1));
-	y = malloc(sizeof(int) * (count_sprite(cub->map) + 1));
+	cub->sx = malloc(sizeof(int) * (count_sprite(cub->map) + 1));
+	cub->sy = malloc(sizeof(int) * (count_sprite(cub->map) + 1));
+	if (cub->sx == NULL || cub->sy == NULL)
+		exit(er_mem());
 	k = 0;
-	x[count_sprite(cub->map)] = -1;
-	y[count_sprite(cub->map)] = -1;
+	cub->sx[count_sprite(cub->map)] = -1;
+	cub->sy[count_sprite(cub->map)] = -1;
 	i = -1;
 	while (cub->map[++i] != NULL && !(j = 0))
 		while (cub->map[i][j])
 		{
 			if (cub->map[i][j] == '2')
 			{
-				x[k] = i;
-				y[k] = j;
+				cub->sx[k] = i;
+				cub->sy[k] = j;
 				k++;
 			}
 			j++;
 		}
-	cub->sx = x;
-	cub->sy = y;
 }

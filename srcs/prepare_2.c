@@ -53,7 +53,7 @@ char	*append_n(char *s)
 
 	i = 0;
 	if ((out = malloc(sizeof(char) * (ft_strlen(s) + 2))) == NULL)
-		return (NULL);
+		exit(er_mem());
 	while (s[i])
 	{
 		out[i] = s[i];

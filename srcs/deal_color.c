@@ -75,7 +75,7 @@ int	pick_color(t_img img, int x, int y)
 	int		color;
 
 	if ((res = malloc(sizeof(char) * (img.bpp + 1))) == NULL)
-		return (-10);
+		exit(er_mem());
 	res[0] = '\0';
 	k = (x - 1) * img.nbc * (img.bpp / 8) + (y - 1) * (img.bpp / 8);
 	x = 0;

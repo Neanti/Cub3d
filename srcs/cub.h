@@ -20,7 +20,6 @@
 # include <stdio.h>
 # include <string.h>
 # include <mlx.h>
-# include "../minilibx/mlx.h"
 # include <sys/types.h>
 # include <math.h>
 # include "cub_struct.h"
@@ -85,5 +84,6 @@ int		check_save(char *s);
 int		begin_check(int ac, char **argv);
 t_wrap	*init_wrap(t_data *data, t_info *game, t_cub *cub, t_img *txt);
 int		handle_quit(void *param);
+int		er_mem(void);
 
 #endif

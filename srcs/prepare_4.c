@@ -55,6 +55,8 @@ t_draw	*ft_pack(int x, int start, int end, int j)
 	t_draw *draw;
 
 	draw = malloc(sizeof(t_draw));
+	if (draw == NULL)
+		exit(er_mem());
 	draw->j = j;
 	draw->start = start;
 	draw->end = end;
