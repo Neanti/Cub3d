@@ -12,7 +12,7 @@
 
 #include "cub.h"
 
-void	save_pixel_put(t_draw *draw, char *out, t_cub *cub)
+void	s_pixel_put(t_draw *draw, char *out, t_cub *cub)
 {
 	ft_put_int(draw->end, &out, 54 + (((cub->rh - draw->start - 1) * cub->rw)
 	+ draw->j) * 4);
@@ -47,28 +47,32 @@ char	*prepare_out(int w, int h)
 	return (out);
 }
 
-void	save_ft_put_line(int x, int start, int end, t_img *txt, int j, int nbt, double wall_x, char *out, t_cub *cub)
+void	s_put_line(t_draw *draw, int nbt, double wall_x, t_wrap *wrap)
 {
 	int i;
 	int col;
 	int color;
 
 	i = 0;
-	col = round(wall_x * (txt[nbt].nbc - 1)) + 1;
-	while (i < j)
+	col = round(wall_x * (wrap->img[nbt].nbc - 1)) + 1;
+	while (i < draw->j)
 	{
-		if (i < start)
-			save_pixel_put(ft_pack(0, i, cub->c, x), out, cub);
-		else if (i > end)
-			save_pixel_put(ft_pack(0, i, cub->f, x), out, cub);
+		if (i < draw->start)
+			s_pixel_put(ft_pack(0, i, wrap->cub->c, draw->x),
+			wrap->out, wrap->cub);
+		else if (i > draw->end)
+			s_pixel_put(ft_pack(0, i, wrap->cub->f, draw->x),
+			wrap->out, wrap->cub);
 		else
 		{
-			color = pick_color(txt[nbt], (int)round(((i - start) / (double)
-			(end - start) * (txt[nbt].nbl - 1))) + 1, col);
-			save_pixel_put(ft_pack(0, i, color, x), out, cub);
+			color = pick_color(wrap->img[nbt],
+			(int)round(((i - draw->start) / (double)
+			(draw->end - draw->start) * (wrap->img[nbt].nbl - 1))) + 1, col);
+			s_pixel_put(ft_pack(0, i, color, draw->x), wrap->out, wrap->cub);
 		}
 		i++;
 	}
+	free(draw);
 }
 
 void	ft_put_int(int n, char **s, int of)

@@ -11,67 +11,67 @@
 #include <math.h>
 #include "cub.h"
 
-void print_cub(t_cub c)
+
+int check_save(char *s)
 {
-	printf("---CUB---\nrw=%i, rh=%i, f=%i, c=%i, no=%s, so=%s, we=%s, ea=%s, s=%s, mx=%i, my=%i\n---FIN---\n", c.rw, c.rh, c.f, c.c, c.no, c.so, c.we, c.ea, c.s, c.mx, c.my);
+	if(s[0] && s[0] != '-')
+		return (0);
+	if(s[1] && s[1] != 's')
+		return (0);
+	if(s[2] && s[2] != 'a')
+		return (0);
+	if(s[3] && s[3] != 'v')
+		return (0);
+	if(s[4] && s[4] != 'e')
+		return (0);
+	if (s[5] != '\0')
+		return (0);
+	return (1);
 }
 
-void print_map(char **map)
+int	begin_check(int ac, char **argv)
 {
-	int i = 0;
-	printf("---DEB MAP---\n");
-	while (map[i] != NULL)
+	if (ac == 1)
+		return (er_file());
+	if (check_ext(argv[1]) == 0)
+		return (er_ext());
+	int fd = open(argv[1], O_RDONLY);
+	if (fd == -1)
+		return (er_read());
+	if (read(fd, NULL, 0) < 0)
 	{
-		printf("%s\n", map[i]);
-		i++;
+		close(fd);
+		return (er_read());
 	}
-	printf("---FIN MAP---\n");
+	close(fd);
+	if (ac > 3)
+		return (er_arg());
+	if (ac == 3 && check_save(argv[2]) == 0)
+		return (er_save());
+	return (0);
 }
 
 int main(int ac, char **argv)
 {
-	if (ac == 1)
-	{
-		printf("Error\n Pas de fichier en argument\n");
+	if(begin_check(ac, argv) == 1)
 		return (0);
-	}
-	if (check_ext(argv[1]) == 0)
-	{
-		printf("Error\n Extension fausse\n");
-		return (0);
-	}
-	int fd = open(argv[1], O_RDONLY);
-	if (read(fd, NULL, 0) < 0)
-	{
-		printf("Error\nEchec de read\n");
-		return (0);
-	}
-
 	char *line;
 	t_cub cub;
 	int k = 0;
 	int stat = 0;
 	char *map;
 	char *oldmap;
-
 	map = malloc(sizeof(char));
 	map[0] = '\0';
-	printf("fd=%i\n", fd);
 	char **rspl;
+	int fd = open(argv[1], O_RDONLY);
 	while ((k = get_next_line(fd, &line)) != 0)
 	{
-		// if (stat == 1 && ft_strtrim(line, " ")[0] != '1')
-		// {
-		// 	printf("Error\nMap coupé ou manque de mur\n");
-		// 	return (0);
-		// }
 		if (stat == 0)
 		{
-			//printf("TOFILL line=%s\n", line);
 			rspl = ft_split(line, ' ');
 			fill_cub(rspl, &cub);
 		}
-		//printf("line=%s\n", line);
 		if (line[0] == '1')
 		{
 			oldmap = map;
@@ -83,63 +83,45 @@ int main(int ac, char **argv)
 		free(line);
 	}
 	free(line);
-	//printf("line=%s\n", line);
-	
 	if (try_path(&cub) == -1)
-	{
-		printf("Error\nChemins non valides");
-		return (0);
-	}
+		return (er_path());
 	if (cub.f == -1 || cub.c == -1)
-	{
-		printf("Error\nMauvaises couleurs\n");
-		return (0);
-	}
-	printf("---MAP---\n%s---FIN MAP---\n", map);
+		return (er_fc());
 	int border = check_border(map);
 	if (!border)
-	{
-		printf("Error\nManque de mur\n");
-		return (0);
-	}
-	printf("soon fin parse\n");
+		return (er_map());
 	char **g_map;
 	g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-	
-
-	print_cub(cub);
 	cub.map = g_map;
 	t_info game = prepare_info();
 	locate_player(&game, &cub);
-	print_map(g_map);
 	locate_sprite(&cub);
-	//fin parsing debut jeu
 	t_data data;
-
 	if ((data.mlx_ptr = mlx_init()) == NULL)
 		return (EXIT_FAILURE);
 	int w = cub.rw;
 	int h = cub.rh;
 	t_img *txt = ft_prepare_txt(cub, data);
-	if (ac == 3)
-	{
-		printf("save img\n");
-		char *out;
-		out = prepare_out(w,h);
-		save_fct_test(&game, &cub, txt, out);
-		int oo = open("save.bmp", O_WRONLY);
-		write(oo, out, w * h * 4 + 54);
-		close(oo);
-		system("leaks a.out");
-		exit(0);
-	}
-	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Hello world")) == NULL)
-		return (EXIT_FAILURE);
 	t_wrap wrap;
 	wrap.data = &data;
 	wrap.game = &game;
 	wrap.cub = &cub;
 	wrap.img = txt;
+	if (ac == 3)
+	{
+		char *out;
+		out = prepare_out(w,h);
+		wrap.out = out;
+		s_fct_test(&wrap);
+		int oo = open("save.bmp", O_WRONLY);
+		write(oo, out, w * h * 4 + 54);
+		close(oo);
+		free(out);
+		system("leaks a.out");
+		exit(0);
+	}
+	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Cub3d")) == NULL)
+		return (EXIT_FAILURE);
 	mlx_key_hook(data.mlx_win, done, &wrap);
 	fct_test(&wrap);
 	close(fd);

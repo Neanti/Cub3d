@@ -76,6 +76,7 @@ typedef struct	s_wrap
 	t_info	*game;
 	t_cub	*cub;
 	t_img	*img;
+	char	*out;
 }				t_wrap;
 
 typedef	struct	s_draw
@@ -107,10 +108,10 @@ char	**remove_space(char **s, int *x, int *y);
 void	locate_player(t_info *game, t_cub *cub);
 void	locate_sprite(t_cub *cub);
 void	fct_test(t_wrap *wrap);
-void	save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out);
-void	save_pixel_put(t_draw *draw, char *out, t_cub *cub);
+void	s_fct_test(t_wrap *wrap);
+void	s_pixel_put(t_draw *draw, char *out, t_cub *cub);
 char	*prepare_out(int w, int h);
-void	save_ft_put_line(int x, int start, int end, t_img *txt, int j, int nbt, double wallx, char *out, t_cub *cub);
+void	s_put_line(t_draw *draw, int nbt, double wall_x, t_wrap *wrap);
 void	ft_put_int(int n, char **s, int of);
 t_img	*ft_prepare_txt(t_cub cub, t_data data);
 void	sort_sprite(t_cub *cub, double posx, double posy);
@@ -133,5 +134,14 @@ double	calc_wall(int map, double pos, int step, double raydir);
 void	prep_no(t_wrap *wrap, int t[7]);
 void	prep_nod(t_wrap *wrap, double d[7], int x, int t[7]);
 double	*deal_wall(t_wrap *wrap, int x, double zbuffer[wrap->cub->rw]);
+void	prep_spd(t_wrap *wrap, double d[2], int i, int t[14]);
+int		er_file();
+int		er_ext();
+int		er_read();
+int		er_fc();
+int		er_path();
+int		er_map();
+int		er_arg();
+int		er_save();
 
 #endif
