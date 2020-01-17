@@ -12,8 +12,7 @@
 
 #ifndef CUB_H
 # define CUB_H
-
-# include "Libft/libft.h"
+# include "libft/libft.h"
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -143,5 +142,8 @@ int		er_path(void);
 int		er_map(void);
 int		er_arg(void);
 int		er_save(void);
+int		check_save(char *s);
+int		begin_check(int ac, char **argv);
+t_wrap	*init_wrap(t_data *data, t_info *game, t_cub *cub, t_img *txt);
 
 #endif
