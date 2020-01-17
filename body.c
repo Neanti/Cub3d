@@ -12,79 +12,7 @@
 
 #include "cub.h"
 
-int		nbt(int side, double raydir_x, double raydir_y)
-{
-	int nbt;
-
-	if (raydir_x > 0)
-		nbt = 0;
-	else
-		nbt = 1;
-	if (side == 1 && raydir_y > 0)
-		nbt = 2;
-	else if (side == 1)
-		nbt = 3;
-	return (nbt);
-}
-
-double	find_wallx(int side, t_wrap *wrap, double wall_dist, int x)
-{
-	double wallx;
-	double raydir_x;
-	double raydir_y;
-
-	raydir_x = wrap->game->dirX + wrap->game->planeX * (2 *
-	x / (double)wrap->cub->rw - 1);
-	raydir_y = wrap->game->dirY + wrap->game->planeY * (2 *
-	x / (double)wrap->cub->rw - 1);
-	if (side == 0)
-		wallx = wrap->game->posY + wall_dist * raydir_y;
-	else
-		wallx = wrap->game->posX + wall_dist * raydir_x;
-	wallx -= floor((wallx));
-	return (wallx);
-}
-
-double	*deal_wall_one(t_wrap *wrap, double zbuffer[wrap->cub->rw], int t[7], double d[7])
-{
-	int		l_height;
-	double	wallx;
-	double	dir_x;
-	double	dir_y;
-	int		tex_x;
-
-	l_height = (int)(wrap->cub->rh / d[6]);
-	dir_x = wrap->game->dirX + wrap->game->planeX *
-	(2 * t[6] / (double)wrap->cub->rw - 1);
-	dir_y = wrap->game->dirY + wrap->game->planeY *
-	(2 * t[6] / (double)wrap->cub->rw - 1);
-	wallx = find_wallx(t[5], wrap, d[6], t[6]);
-	tex_x = (int)(wallx * (double)wrap->img[4].nbc);
-	if (t[5] == 0 && dir_x > 0)
-		tex_x = wrap->img[0].nbc - tex_x - 1;
-	if (t[5] == 1 && dir_y < 0)
-		tex_x = wrap->img[0].nbc - tex_x - 1;
-	if (t[5] == 1)
-		ft_put_line(ft_pack(t[6], -l_height / 2 + wrap->cub->rh / 2, l_height / 2
-		+ wrap->cub->rh / 2, wrap->cub->rh),
-		nbt(t[5], dir_x, dir_y), wallx, wrap); // CHECK X
-	zbuffer[t[6]] = d[6];
-	return (zbuffer);
-}
-
-int		deal_side(double *sdist, double ddist, int *map, int step)
-{
-	*sdist = *sdist + ddist;
-	*map = *map + step;
-	return (1);
-}
-
-double	calc_wall(int map, double pos, int step, double raydir)
-{
-	return ((map - pos + (1 - step) / 2) / raydir);
-}
-
-void	prep_no(t_wrap *wrap, int t[6])
+void	prep_no(t_wrap *wrap, int t[7])
 {
 	t[0] = (int)wrap->game->posX;
 	t[1] = (int)wrap->game->posY;
@@ -129,7 +57,7 @@ double	*deal_wall(t_wrap *wrap, int x, double zbuffer[wrap->cub->rw])
 		t[4] = (wrap->cub->map[t[0]][t[1]] - 48 == 1) ? 1 : t[4];
 		d[6] = (t[5] == 0) ? calc_wall(t[0], wrap->game->posX, t[2], d[0]) :
 		calc_wall(t[1], wrap->game->posY, t[3], d[1]);
-		deal_wall_one(wrap, zbuffer, t, d);
+		de(wrap, zbuffer, t, d);
 	}
 	return (zbuffer);
 }
@@ -146,7 +74,7 @@ void	prep_spd(t_wrap *wrap, double d[2], int i, int t[14])
 	* wrap->game->planeY);
 	d[0] = d2 * (wrap->game->dirY * d0 - wrap->game->dirX * d1);
 	d[1] = d2 * (-1 * wrap->game->planeY * d0 + wrap->game->planeX * d1);
-	//prep_spi(wrap, t, d);
+	prep_spi(wrap, t, d);
 }
 
 void	prep_spi(t_wrap *wrap, int t[14], double d[2])
@@ -176,7 +104,6 @@ void	deal_sprite(t_wrap *wrap, int i, double *zbuffer)
 	int		t[14];
 
 	prep_spd(wrap, d, i, t);
-	prep_spi(wrap, t,d);
 	while (t[8] < t[7] + 1)
 	{
 		t[9] = (int)(256 * (t[8] - (-t[5] / 2 + t[0])) *

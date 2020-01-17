@@ -127,5 +127,10 @@ char **ft_prepare_map(char *m, int *x, int *y);
 int done(int key, void *a);
 int count_sprite(char **s);
 t_draw	*ft_pack(int a, int b, int c, int d);
+int		nbt(int side, double raydir_x, double raydir_y);
+double	find_wallx(int side, t_wrap *wrap, double wall_dist, int x);
+double	*de(t_wrap *wrap, double zbuffer[wrap->cub->rw], int t[7], double d[7]);
+int		deal_side(double *sdist, double ddist, int *map, int step);
+double	calc_wall(int map, double pos, int step, double raydir);
 
 #endif
