@@ -14,25 +14,25 @@
 
 void	deal_key_1(t_info *g, t_cub *cub)
 {
-	g->posX += g->dirX * 0.8;
-	g->posY += g->dirY * 0.8;
-	if (g->posX >= cub->mx - 1 || g->posX <= 1 ||
-	g->posY >= cub->my - 1 || g->posY <= 1)
+	g->posx += g->dirx * 0.8;
+	g->posy += g->diry * 0.8;
+	if (g->posx >= cub->mx - 1 || g->posx <= 1 ||
+	g->posy >= cub->my - 1 || g->posy <= 1)
 	{
-		g->posX -= g->dirX * 0.8;
-		g->posY -= g->dirY * 0.8;
+		g->posx -= g->dirx * 0.8;
+		g->posy -= g->diry * 0.8;
 	}
 }
 
 void	deal_key_2(t_info *game, t_cub *cub)
 {
-	game->posX -= game->dirX * 0.8;
-	game->posY -= game->dirY * 0.8;
-	if (game->posX >= cub->mx - 1 || game->posX <= 1 ||
-	game->posY >= cub->my - 1 || game->posY <= 1)
+	game->posx -= game->dirx * 0.8;
+	game->posy -= game->diry * 0.8;
+	if (game->posx >= cub->mx - 1 || game->posx <= 1 ||
+	game->posy >= cub->my - 1 || game->posy <= 1)
 	{
-		game->posX += game->dirX * 0.8;
-		game->posY += game->dirY * 0.8;
+		game->posx += game->dirx * 0.8;
+		game->posy += game->diry * 0.8;
 	}
 }
 
@@ -43,9 +43,9 @@ void	deal_key(int key, t_info *game, t_cub *cub)
 	else if (key == 1 || key == 115)
 		deal_key_2(game, cub);
 	else if (key == 0 || key == 113)
-		rot_vec(-20 * game->startO, game);
+		rot_vec(-20 * game->starto, game);
 	else if (key == 2 || key == 100)
-		rot_vec(20 * game->startO, game);
+		rot_vec(20 * game->starto, game);
 }
 
 int		done(int key, void *a)

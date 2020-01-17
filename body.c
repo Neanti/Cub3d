@@ -12,71 +12,6 @@
 
 #include "cub.h"
 
-void	prep_no(t_wrap *wrap, int t[7])
-{
-	t[0] = (int)wrap->game->posX;
-	t[1] = (int)wrap->game->posY;
-	t[4] = 0;
-}
-
-void	prep_nod(t_wrap *wrap, double d[7], int x, int t[7])
-{
-	d[0] = wrap->game->dirX + wrap->game->planeX * (2 *
-	x / (double)wrap->cub->rw - 1);
-	d[1] = wrap->game->dirY + wrap->game->planeY * (2 *
-	x / (double)wrap->cub->rw - 1);
-	d[4] = fabs(1 / d[0]);
-	d[5] = fabs(1 / d[1]);
-	if (d[0] < 0 && (t[2] = -1))
-		d[2] = (wrap->game->posX - t[0]) * d[4];
-	else if ((t[2] = 1))
-		d[2] = (t[0] + 1.0 - wrap->game->posX) * d[4];
-	if (d[1] < 0)
-	{
-		t[3] = -1;
-		d[3] = (wrap->game->posY - t[1]) * d[5];
-	}
-	else if ((t[3] = 1))
-		d[3] = (t[1] + 1.0 - wrap->game->posY) * d[5];
-	t[6] = x;
-}
-
-double	*deal_wall(t_wrap *wrap, int x, double zbuffer[wrap->cub->rw])
-{
-	int		t[7];
-	double	d[7];
-
-	prep_no(wrap, t);
-	prep_nod(wrap, d, x, t);
-	while (t[4] == 0)
-	{
-		if (d[2] < d[3] && !(t[5] = 0))
-			deal_side(&d[2], d[4], &t[0], t[2]);
-		else
-			t[5] = deal_side(&d[3], d[5], &t[1], t[3]);
-		t[4] = (wrap->cub->map[t[0]][t[1]] - 48 == 1) ? 1 : t[4];
-		d[6] = (t[5] == 0) ? calc_wall(t[0], wrap->game->posX, t[2], d[0]) :
-		calc_wall(t[1], wrap->game->posY, t[3], d[1]);
-		de(wrap, zbuffer, t, d);
-	}
-	return (zbuffer);
-}
-
-void	prep_spd(t_wrap *wrap, double d[2], int i, int t[14])
-{
-	double d0;
-	double d1;
-	double d2;
-
-	d0 = wrap->cub->sx[i] + 0.5 - wrap->game->posX;
-	d1 = wrap->cub->sy[i] + 0.5 - wrap->game->posY;
-	d2 = 1.0 / (wrap->game->planeX * wrap->game->dirY - wrap->game->dirX
-	* wrap->game->planeY);
-	d[0] = d2 * (wrap->game->dirY * d0 - wrap->game->dirX * d1);
-	d[1] = d2 * (-1 * wrap->game->planeY * d0 + wrap->game->planeX * d1);
-	prep_spi(wrap, t, d);
-}
-
 void	prep_spi(t_wrap *wrap, int t[14], double d[2])
 {
 	t[0] = (int)((wrap->cub->rw / 2) * (1 + d[0] / d[1]));
@@ -96,6 +31,21 @@ void	prep_spi(t_wrap *wrap, int t[14], double d[2])
 	if (t[7] >= wrap->cub->rw)
 		t[7] = wrap->cub->rw - 1;
 	t[8] = t[6];
+}
+
+void	prep_spd(t_wrap *wrap, double d[2], int i, int t[14])
+{
+	double d0;
+	double d1;
+	double d2;
+
+	d0 = wrap->cub->sx[i] + 0.5 - wrap->game->posx;
+	d1 = wrap->cub->sy[i] + 0.5 - wrap->game->posy;
+	d2 = 1.0 / (wrap->game->planex * wrap->game->diry - wrap->game->dirx
+	* wrap->game->planey);
+	d[0] = d2 * (wrap->game->diry * d0 - wrap->game->dirx * d1);
+	d[1] = d2 * (-1 * wrap->game->planey * d0 + wrap->game->planex * d1);
+	prep_spi(wrap, t, d);
 }
 
 void	deal_sprite(t_wrap *wrap, int i, double *zbuffer)
@@ -136,8 +86,8 @@ void	fct_test(t_wrap *wrap)
 	int		x;
 
 	w = wrap->cub->rw;
-	pos_x = wrap->game->posX;
-	pos_y = wrap->game->posY;
+	pos_x = wrap->game->posx;
+	pos_y = wrap->game->posy;
 	x = 0;
 	while (x < w)
 	{

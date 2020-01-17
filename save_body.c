@@ -16,12 +16,12 @@ void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out)
 {
 	int w = cub->rw;
 	int h = cub->rh;
-	double pos_x = game->posX;
-	double pos_y = game->posY;
-	double dir_x = game->dirX;
-	double dir_y = game->dirY;
-	double plane_x = game->planeX;
-	double plane_y = game->planeY;
+	double pos_x = game->posx;
+	double pos_y = game->posy;
+	double dir_x = game->dirx;
+	double dir_y = game->diry;
+	double plane_x = game->planex;
+	double plane_y = game->planey;
 
 	double z_buffer[cub->rw];
 
@@ -155,7 +155,9 @@ void save_fct_test(t_info *game, t_cub *cub, t_img *txt, char *out)
 					int tex_y = ((d * (txt[4].nbl -1)) / sprite_height) / 256;
 					int color = pick_color(txt[4], tex_y + 1, tex_x + 1);
 					if (color >= 0)
-						save_pixel_put(stripe, y, color, out, cub);
+						//save_pixel_put(stripe, y, color, out, cub);
+						save_pixel_put(ft_pack(0, y, color, stripe), out, cub);
+
 				}
 			}
 		}

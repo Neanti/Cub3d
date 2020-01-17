@@ -14,46 +14,46 @@
 
 void	place_n(t_info *game, int i, int j)
 {
-	game->posX = i + 0.5;
-	game->posY = j + 0.5;
-	game->dirX = -1;
-	game->dirY = 0;
-	game->planeX = 0;
-	game->planeY = 0.66;
-	game->startO = -1;
+	game->posx = i + 0.5;
+	game->posy = j + 0.5;
+	game->dirx = -1;
+	game->diry = 0;
+	game->planex = 0;
+	game->planey = 0.66;
+	game->starto = -1;
 }
 
 void	place_e(t_info *game, int i, int j)
 {
-	game->posX = i + 0.5;
-	game->posY = j + 0.5;
-	game->dirX = 0;
-	game->dirY = 1;
-	game->planeY = 0;
-	game->planeX = 0.66;
-	game->startO = -1;
+	game->posx = i + 0.5;
+	game->posy = j + 0.5;
+	game->dirx = 0;
+	game->diry = 1;
+	game->planey = 0;
+	game->planex = 0.66;
+	game->starto = -1;
 }
 
 void	place_w(t_info *game, int i, int j)
 {
-	game->posX = i + 0.5;
-	game->posY = j + 0.5;
-	game->dirX = 0;
-	game->dirY = -1;
-	game->planeY = 0;
-	game->planeX = 0.66;
-	game->startO = 1;
+	game->posx = i + 0.5;
+	game->posy = j + 0.5;
+	game->dirx = 0;
+	game->diry = -1;
+	game->planey = 0;
+	game->planex = 0.66;
+	game->starto = 1;
 }
 
 void	place_s(t_info *game, int i, int j)
 {
-	game->posX = i + 0.5;
-	game->posY = j + 0.5;
-	game->dirX = 1;
-	game->dirY = 0;
-	game->planeX = 0;
-	game->planeY = 0.66;
-	game->startO = 1;
+	game->posx = i + 0.5;
+	game->posy = j + 0.5;
+	game->dirx = 1;
+	game->diry = 0;
+	game->planex = 0;
+	game->planey = 0.66;
+	game->starto = 1;
 }
 
 void	locate_player(t_info *game, t_cub *cub)

@@ -16,12 +16,12 @@ t_info	prepare_info(void)
 {
 	t_info i;
 
-	i.posX = 12;
-	i.posY = 12;
-	i.dirX = -1;
-	i.dirY = 0;
-	i.planeX = 0.66;
-	i.planeY = 0;
+	i.posx = 12;
+	i.posy = 12;
+	i.dirx = -1;
+	i.diry = 0;
+	i.planex = 0.66;
+	i.planey = 0;
 	return (i);
 }
 

@@ -16,12 +16,12 @@ void	rot_vec(double a, t_info *game)
 {
 	double old;
 
-	old = game->dirX;
-	game->dirX = cos(d2r(a)) * game->dirX - sin(d2r(a)) * game->dirY;
-	game->dirY = sin(d2r(a)) * old + cos(d2r(a)) * game->dirY;
-	old = game->planeX;
-	game->planeX = cos(d2r(a)) * game->planeX - sin(d2r(a)) * game->planeY;
-	game->planeY = sin(d2r(a)) * old + cos(d2r(a)) * game->planeY;
+	old = game->dirx;
+	game->dirx = cos(d2r(a)) * game->dirx - sin(d2r(a)) * game->diry;
+	game->diry = sin(d2r(a)) * old + cos(d2r(a)) * game->diry;
+	old = game->planex;
+	game->planex = cos(d2r(a)) * game->planex - sin(d2r(a)) * game->planey;
+	game->planey = sin(d2r(a)) * old + cos(d2r(a)) * game->planey;
 }
 
 double	d2r(double d)

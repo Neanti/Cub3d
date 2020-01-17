@@ -12,9 +12,11 @@
 
 #include "cub.h"
 
-void	save_pixel_put(int stripe, int y, int color, char *out, t_cub *cub)
+void	save_pixel_put(t_draw *draw, char *out, t_cub *cub)
 {
-	ft_put_int(color, &out, 54 + (((cub->rh - y - 1) * cub->rw) + stripe) * 4);
+	ft_put_int(draw->end, &out, 54 + (((cub->rh - draw->start - 1) * cub->rw)
+	+ draw->j) * 4);
+	free(draw);
 }
 
 char	*prepare_out(int w, int h)
@@ -56,14 +58,14 @@ void	save_ft_put_line(int x, int start, int end, t_img *txt, int j, int nbt, dou
 	while (i < j)
 	{
 		if (i < start)
-			save_pixel_put(x, i, cub->C, out, cub);
+			save_pixel_put(ft_pack(0, i, cub->c, x), out, cub);
 		else if (i > end)
-			save_pixel_put(x, i, cub->F, out, cub);
+			save_pixel_put(ft_pack(0, i, cub->f, x), out, cub);
 		else
 		{
 			color = pick_color(txt[nbt], (int)round(((i - start) / (double)
 			(end - start) * (txt[nbt].nbl - 1))) + 1, col);
-			save_pixel_put(x, i, color, out, cub);
+			save_pixel_put(ft_pack(0, i, color, x), out, cub);
 		}
 		i++;
 	}
@@ -94,23 +96,23 @@ t_img	*ft_prepare_txt(t_cub cub, t_data data)
 	t_img	*out;
 
 	out = malloc(sizeof(t_img) * 5);
-	out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.NO,
+	out[0].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.no,
 	&(out[0].nbc), &(out[0].nbl));
 	out[0].img = mlx_get_data_addr(out[0].img, &(out[0].bpp),
 	&(out[0].lsize), &(out[0].endian));
-	out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.SO,
+	out[1].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.so,
 	&(out[1].nbc), &(out[1].nbl));
 	out[1].img = mlx_get_data_addr(out[1].img, &(out[1].bpp),
 	&(out[1].lsize), &(out[1].endian));
-	out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.EA,
+	out[2].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.ea,
 	&(out[2].nbc), &(out[2].nbl));
 	out[2].img = mlx_get_data_addr(out[2].img, &(out[2].bpp),
 	&(out[2].lsize), &(out[2].endian));
-	out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.WE,
+	out[3].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.we,
 	&(out[3].nbc), &(out[3].nbl));
 	out[3].img = mlx_get_data_addr(out[3].img, &(out[3].bpp),
 	&(out[3].lsize), &(out[3].endian));
-	out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.S,
+	out[4].img = mlx_xpm_file_to_image(data.mlx_ptr, cub.s,
 	&(out[4].nbc), &(out[4].nbl));
 	out[4].img = mlx_get_data_addr(out[4].img, &(out[4].bpp),
 	&(out[4].lsize), &(out[4].endian));

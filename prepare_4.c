@@ -50,14 +50,14 @@ int		check_border(char *s)
 	return (1);
 }
 
-t_draw	*ft_pack(int a, int b, int c, int d)
+t_draw	*ft_pack(int x, int start, int end, int j)
 {
 	t_draw *draw;
 
 	draw = malloc(sizeof(t_draw));
-	draw->j = d;
-	draw->start = b;
-	draw->end = c;
-	draw->x = a;
+	draw->j = j;
+	draw->start = start;
+	draw->end = end;
+	draw->x = x;
 	return (draw);
 }

@@ -13,7 +13,7 @@
 
 void print_cub(t_cub c)
 {
-	printf("---CUB---\nrw=%i, rh=%i, F=%i, C=%i, NO=%s, SO=%s, WE=%s, EA=%s, S=%s, mx=%i, my=%i\n---FIN---\n", c.rw, c.rh, c.F, c.C, c.NO, c.SO, c.WE, c.EA, c.S, c.mx, c.my);
+	printf("---CUB---\nrw=%i, rh=%i, f=%i, c=%i, no=%s, so=%s, we=%s, ea=%s, s=%s, mx=%i, my=%i\n---FIN---\n", c.rw, c.rh, c.f, c.c, c.no, c.so, c.we, c.ea, c.s, c.mx, c.my);
 }
 
 void print_map(char **map)
@@ -90,7 +90,7 @@ int main(int ac, char **argv)
 		printf("Error\nChemins non valides");
 		return (0);
 	}
-	if (cub.F == -1 || cub.C == -1)
+	if (cub.f == -1 || cub.c == -1)
 	{
 		printf("Error\nMauvaises couleurs\n");
 		return (0);

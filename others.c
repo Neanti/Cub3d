@@ -57,10 +57,10 @@ void	ft_put_line(t_draw *draw, int nbt, double wall_x, t_wrap *wrap)
 	{
 		if (i < draw->start)
 			mlx_pixel_put(wrap->data->mlx_ptr, wrap->data->mlx_win,
-			draw->x, i, wrap->cub->C);
+			draw->x, i, wrap->cub->c);
 		else if (i > draw->end)
 			mlx_pixel_put(wrap->data->mlx_ptr, wrap->data->mlx_win,
-			draw->x, i, wrap->cub->F);
+			draw->x, i, wrap->cub->f);
 		else
 		{
 			color = pick_color(wrap->img[nbt], (int)round(((i - draw->start) /

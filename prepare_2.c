@@ -33,15 +33,15 @@ int		try_fd(char *s)
 
 int		try_path(t_cub *cub)
 {
-	if (try_fd(cub->NO) < 0)
+	if (try_fd(cub->no) < 0)
 		return (-1);
-	if (try_fd(cub->SO) < 0)
+	if (try_fd(cub->so) < 0)
 		return (-1);
-	if (try_fd(cub->WE) < 0)
+	if (try_fd(cub->we) < 0)
 		return (-1);
-	if (try_fd(cub->EA) < 0)
+	if (try_fd(cub->ea) < 0)
 		return (-1);
-	if (try_fd(cub->S) < 0)
+	if (try_fd(cub->s) < 0)
 		return (-1);
 	return (1);
 }

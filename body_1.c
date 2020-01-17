@@ -33,14 +33,14 @@ double	find_wallx(int side, t_wrap *wrap, double wall_dist, int x)
 	double raydir_x;
 	double raydir_y;
 
-	raydir_x = wrap->game->dirX + wrap->game->planeX * (2 *
+	raydir_x = wrap->game->dirx + wrap->game->planex * (2 *
 	x / (double)wrap->cub->rw - 1);
-	raydir_y = wrap->game->dirY + wrap->game->planeY * (2 *
+	raydir_y = wrap->game->diry + wrap->game->planey * (2 *
 	x / (double)wrap->cub->rw - 1);
 	if (side == 0)
-		wallx = wrap->game->posY + wall_dist * raydir_y;
+		wallx = wrap->game->posy + wall_dist * raydir_y;
 	else
-		wallx = wrap->game->posX + wall_dist * raydir_x;
+		wallx = wrap->game->posx + wall_dist * raydir_x;
 	wallx -= floor((wallx));
 	return (wallx);
 }
@@ -54,9 +54,9 @@ double	*de(t_wrap *wrap, double zbuffer[wrap->cub->rw], int t[7], double d[7])
 	int		tex_x;
 
 	l_height = (int)(wrap->cub->rh / d[6]);
-	dir_x = wrap->game->dirX + wrap->game->planeX *
+	dir_x = wrap->game->dirx + wrap->game->planex *
 	(2 * t[6] / (double)wrap->cub->rw - 1);
-	dir_y = wrap->game->dirY + wrap->game->planeY *
+	dir_y = wrap->game->diry + wrap->game->planey *
 	(2 * t[6] / (double)wrap->cub->rw - 1);
 	wallx = find_wallx(t[5], wrap, d[6], t[6]);
 	tex_x = (int)(wallx * (double)wrap->img[4].nbc);

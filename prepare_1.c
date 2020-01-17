@@ -84,19 +84,19 @@ void	check_cub(t_cub *cub, char **s, int id)
 {
 	printf("ID CUB = %i\n", id);
 	if (id == 2)
-		cub->NO = ft_strdup(s[1]);
+		cub->no = ft_strdup(s[1]);
 	else if (id == 3)
-		cub->SO = ft_strdup(s[1]);
+		cub->so = ft_strdup(s[1]);
 	else if (id == 4)
-		cub->WE = ft_strdup(s[1]);
+		cub->we = ft_strdup(s[1]);
 	else if (id == 5)
-		cub->EA = ft_strdup(s[1]);
+		cub->ea = ft_strdup(s[1]);
 	else if (id == 6)
-		cub->S = ft_strdup(s[1]);
+		cub->s = ft_strdup(s[1]);
 	else if (id == 7)
-		cub->F = arrange(s);
+		cub->f = arrange(s);
 	else if (id == 8)
-		cub->C = arrange(s);
+		cub->c = arrange(s);
 }
 
 void	fill_cub(char **s, t_cub *cub)
