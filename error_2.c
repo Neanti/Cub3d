@@ -12,19 +12,19 @@
 
 #include "cub.h"
 
-int er_map()
+int er_map(void)
 {
 	ft_putstr_fd("Error\nLa carte n'est pas valide.\n", 2);
 	return (1);
 }
 
-int er_arg()
+int er_arg(void)
 {
 	ft_putstr_fd("Error\nIl y a trop d'arguments.\n", 2);
 	return (1);
 }
 
-int er_save()
+int er_save(void)
 {
 	ft_putstr_fd("Error\nLe second argument n'est pas reconnu.\n", 2);
 	return (1);

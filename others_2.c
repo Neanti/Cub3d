@@ -64,10 +64,8 @@ int		done(int key, void *a)
 	if (key == 53 || key == 65307)
 	{
 		mlx_destroy_window(data->mlx_ptr, data->mlx_win);
-		printf("LEGIt EXIT\n");
 		system("leaks a.out");
 		exit(0);
-		return (0);
 	}
 	else
 		deal_key(key, game, cub);

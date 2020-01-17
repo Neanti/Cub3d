@@ -82,7 +82,6 @@ int		check_id(char *s)
 
 void	check_cub(t_cub *cub, char **s, int id)
 {
-	printf("ID CUB = %i\n", id);
 	if (id == 2)
 		cub->no = ft_strdup(s[1]);
 	else if (id == 3)

@@ -12,31 +12,31 @@
 
 #include "cub.h"
 
-int er_file()
+int er_file(void)
 {
 	ft_putstr_fd("Error\nPas de fichier en argument.\n", 2);
 	return (1);
 }
 
-int er_ext()
+int er_ext(void)
 {
 	ft_putstr_fd("Error\nLe fichier n'as pas la bonne extension.\n", 2);
 	return (1);
 }
 
-int er_read()
+int er_read(void)
 {
 	ft_putstr_fd("Error\nLa lecture n'as pas fonctionné.\n", 2);
 	return (1);
 }
 
-int er_fc()
+int er_fc(void)
 {
 	ft_putstr_fd("Error\nLe champ C ou F est incorrect.\n", 2);
 	return (1);
 }
 
-int er_path()
+int er_path(void)
 {
 	ft_putstr_fd("Error\nAu moins un des chemins n'est pas valide.\n", 2);
 	return (1);

@@ -1,14 +1,3 @@
-#include "Libft/libft.h"
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <mlx.h>
-#include "minilibx/mlx.h"
-#include <sys/types.h>
-#include <math.h>
 #include "cub.h"
 
 
@@ -51,82 +40,101 @@ int	begin_check(int ac, char **argv)
 	return (0);
 }
 
-int main(int ac, char **argv)
+void save_image(t_wrap *wrap)
 {
-	if(begin_check(ac, argv) == 1)
-		return (0);
+		char *out;
+		int fd;
+
+		out = prepare_out(wrap->cub->rw,wrap->cub->rh);
+		wrap->out = out;
+		s_fct_test(wrap);
+		fd = open("save.bmp", O_WRONLY | O_CREAT | O_TRUNC);
+		write(fd, out, wrap->cub->rw * wrap->cub->rh * 4 + 54);
+		close(fd);
+		free(out);
+		exit(0);
+}
+
+int check_cub_start(char *map, t_cub cub)
+{
+	int border;
+
+	if (try_path(&cub) == -1)
+		exit(er_path());
+	if (cub.f == -1 || cub.c == -1)
+		exit(er_fc());
+	border = check_border(map);
+	if (!border)
+		exit(er_map());
+	return (0);
+}
+
+char *wrap_join(char *s, char *s2)
+{
+	char *old;
+
+	old = s;
+	s = ft_strjoin(s, s2);
+	free(old);
+	return (s);
+}
+
+void gnl_use(char *s, t_cub *cub)
+{
+	int fd;
 	char *line;
-	t_cub cub;
-	int k = 0;
-	int stat = 0;
+	int k;
 	char *map;
-	char *oldmap;
+	int stat;
+
+	fd = open(s, O_RDONLY);
+	stat = 0;
+	k = 1;
 	map = malloc(sizeof(char));
 	map[0] = '\0';
-	char **rspl;
-	int fd = open(argv[1], O_RDONLY);
-	while ((k = get_next_line(fd, &line)) != 0)
+	while ((k == 1) && (k = get_next_line(fd, &line)) >= 0)
 	{
 		if (stat == 0)
-		{
-			rspl = ft_split(line, ' ');
-			fill_cub(rspl, &cub);
-		}
+			fill_cub(ft_split(line, ' '), cub);
 		if (line[0] == '1')
 		{
-			oldmap = map;
-			map = ft_strjoin(map, line);
+			map = wrap_join(map, line);
 			map = append_n(map);
-			free(oldmap);
 			stat = 1;
 		}
 		free(line);
 	}
-	free(line);
-	if (try_path(&cub) == -1)
-		return (er_path());
-	if (cub.f == -1 || cub.c == -1)
-		return (er_fc());
-	int border = check_border(map);
-	if (!border)
-		return (er_map());
-	char **g_map;
-	g_map = ft_prepare_map(map, &cub.mx, &cub.my);
-	cub.map = g_map;
-	t_info game = prepare_info();
+	close(fd);
+	check_cub_start(map, *cub);
+	cub->map = ft_prepare_map(map, &cub->mx, &cub->my);
+}
+
+int main(int ac, char **argv)
+{
+	t_wrap	wrap;
+	t_cub	cub;
+	t_info	game;
+	t_img	*txt;
+	t_data	data;
+
+	if(begin_check(ac, argv) == 1)
+		return (0);
+	gnl_use(argv[1], &cub);
+	game = prepare_info();
 	locate_player(&game, &cub);
 	locate_sprite(&cub);
-	t_data data;
 	if ((data.mlx_ptr = mlx_init()) == NULL)
-		return (EXIT_FAILURE);
-	int w = cub.rw;
-	int h = cub.rh;
-	t_img *txt = ft_prepare_txt(cub, data);
-	t_wrap wrap;
+		return (0);
+	txt = ft_prepare_txt(cub, data);
 	wrap.data = &data;
 	wrap.game = &game;
 	wrap.cub = &cub;
 	wrap.img = txt;
 	if (ac == 3)
-	{
-		char *out;
-		out = prepare_out(w,h);
-		wrap.out = out;
-		s_fct_test(&wrap);
-		int oo = open("save.bmp", O_WRONLY);
-		write(oo, out, w * h * 4 + 54);
-		close(oo);
-		free(out);
-		system("leaks a.out");
-		exit(0);
-	}
-	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, w, h, "Cub3d")) == NULL)
-		return (EXIT_FAILURE);
+		save_image(&wrap);
+	if ((data.mlx_win = mlx_new_window(data.mlx_ptr, cub.rw, cub.rh, "Cub3d")) == NULL)
+		return (0);
 	mlx_key_hook(data.mlx_win, done, &wrap);
 	fct_test(&wrap);
-	close(fd);
-	free(txt);
-	free(g_map);
-	system("leaks a.out");
 	return (0);
 }

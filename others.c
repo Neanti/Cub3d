@@ -41,7 +41,6 @@ char	*fusion(char **s)
 			free(s2);
 		i++;
 	}
-	printf("RET FUSI= %s\n", s1);
 	return (s1);
 }
 

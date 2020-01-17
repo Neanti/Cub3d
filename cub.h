@@ -135,13 +135,13 @@ void	prep_no(t_wrap *wrap, int t[7]);
 void	prep_nod(t_wrap *wrap, double d[7], int x, int t[7]);
 double	*deal_wall(t_wrap *wrap, int x, double zbuffer[wrap->cub->rw]);
 void	prep_spd(t_wrap *wrap, double d[2], int i, int t[14]);
-int		er_file();
-int		er_ext();
-int		er_read();
-int		er_fc();
-int		er_path();
-int		er_map();
-int		er_arg();
-int		er_save();
+int		er_file(void);
+int		er_ext(void);
+int		er_read(void);
+int		er_fc(void);
+int		er_path(void);
+int		er_map(void);
+int		er_arg(void);
+int		er_save(void);
 
 #endif
